@@ -1,1 +1,1 @@
-# USElections-GPT
+# US-Elections-GPT
