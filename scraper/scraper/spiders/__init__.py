@@ -6,4 +6,8 @@
 from cnn import CNNSpider
 
 
-__all__ = ['CNNSpider']
+class SpidersEnum:
+    CNNSpider = 'CNNSpider'
+
+
+__all__ = ['CNNSpider', 'FoxNewsSpider', 'MSNBCSpider', 'ReutersSpider', 'SpidersEnum']
