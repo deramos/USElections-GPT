@@ -2,12 +2,20 @@
 #
 # Please refer to the documentation for information on how to create and manage
 # your spiders.
-
-from cnn import CNNSpider
-
-
-class SpidersEnum:
-    CNNSpider = 'CNNSpider'
+import enum
+from .cnn import CNNSpider
 
 
-__all__ = ['CNNSpider', 'FoxNewsSpider', 'MSNBCSpider', 'ReutersSpider', 'SpidersEnum']
+class SpidersEnum(enum.Enum):
+    FoxNewsSpider = 'foxnews'
+    CNNSpider = 'cnn'
+
+    @classmethod
+    def get_class_name(cls, value):
+        for member in cls:
+            if member.value == value:
+                return member.name
+        raise ValueError(f"Invalid enum value: {value}")
+
+
+__all__ = ['CNNSpider', 'SpidersEnum']

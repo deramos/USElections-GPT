@@ -2,17 +2,17 @@ import re
 import scrapy
 from typing import Any
 from config import config
-from .base import BaseSpider
+from base import BaseSpider
 from datetime import datetime
 from scrapy.http import Response
 
 
-class CNNSpider(BaseSpider):
-    name = 'CNN Crawl Spider'
-    base_url = 'https://edition.cnn.com/'
-    redis_key = 'cnn-visited'
+class FoxNewsSpider(BaseSpider):
+    name = 'FoxNews Crawl Spider'
+    base_url = 'https://www.foxnews.com/politics/'
+    redis_key = 'foxnews-visited'
     kafka_topic = config.KAFKA_TOPIC
-    politics_url_pattern = r'https://\w+\.cnn\.com/\d{4}/\d{2}/\d{2}/politics/[\w-]+'
+    politics_url_pattern = r'https://www\.foxnews\.com/politics/[\w-]+'
 
     def start_requests(self):
         """
@@ -23,12 +23,12 @@ class CNNSpider(BaseSpider):
 
     def parse(self, response: Response, **kwargs: Any) -> Any:
         """
-        parse the scraped webpage for processing. The body of the webpage is only passed if it is a
-        politics webpage.
-        :param response: response from the scraped web page
-        :param kwargs: additional keyword arguments
-        :return:
-        """
+                parse the scraped webpage for processing. The body of the webpage is only passed if it is a
+                politics webpage.
+                :param response: response from the scraped web page
+                :param kwargs: additional keyword arguments
+                :return:
+                """
 
         # Check whether the webpage url matches the `politics` regex
         if re.match(self.politics_url_pattern, response.url):
@@ -54,3 +54,4 @@ class CNNSpider(BaseSpider):
                 # Follow links to other pages recursively
                 for link in response.css('a::attr(href)').getall():
                     yield response.follow(link, callback=self.parse)
+
