@@ -1,8 +1,27 @@
 version: 3
 
 services:
-  backend:
+  api:
     build:
       context: .
-      dockerfile: scraper/Dockerfile
-    command: []
+      dockerfile: Dockerfile
+    command: [ "uvicorn", "api.main:app", "--host", "0.0.0.0", "--port", "8000" , "--workers", "3"]
+    networks:
+      - app-network
+    volumes:
+      - api-data:/var/lib/api-data
+    depends_on:
+      - redis
+      - zookeeper
+      - kafka
+      - pinecone
+      - postgres
+    env_file:
+      - .env
+
+networks:
+  app-network:
+    driver:  bridge
+
+volumes:
+  api-data

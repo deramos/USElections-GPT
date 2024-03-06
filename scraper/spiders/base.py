@@ -3,7 +3,7 @@ from typing import Any
 from config import config
 from scrapy.http import Response
 from confluent_kafka import Producer
-from dbservices.redis import RedisService
+from dbservices.redisservice import RedisService
 
 
 class BaseSpider(scrapy.Spider):

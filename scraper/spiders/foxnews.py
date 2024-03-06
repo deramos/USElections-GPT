@@ -2,7 +2,7 @@ import re
 import scrapy
 from typing import Any
 from config import config
-from base import BaseSpider
+from .base import BaseSpider
 from datetime import datetime
 from scrapy.http import Response
 
@@ -23,12 +23,12 @@ class FoxNewsSpider(BaseSpider):
 
     def parse(self, response: Response, **kwargs: Any) -> Any:
         """
-                parse the scraped webpage for processing. The body of the webpage is only passed if it is a
-                politics webpage.
-                :param response: response from the scraped web page
-                :param kwargs: additional keyword arguments
-                :return:
-                """
+        parse the scraped webpage for processing. The body of the webpage is only passed if it is a
+        politics webpage.
+        :param response: response from the scraped web page
+        :param kwargs: additional keyword arguments
+        :return:
+        """
 
         # Check whether the webpage url matches the `politics` regex
         if re.match(self.politics_url_pattern, response.url):
@@ -41,11 +41,12 @@ class FoxNewsSpider(BaseSpider):
                 content = response.css('p::text').getall()
 
                 # Send data to Kafka topic
-                self.producer.produce(self.kafka_topic,
-                                      value={'title': title,
-                                             'content': content,
-                                             'url': response.url,
-                                             'created_at': datetime.utcnow()})
+                self.producer.produce(
+                    self.kafka_topic,
+                    value={'title': title,
+                           'content': content,
+                           'url': response.url,
+                           'created_at': datetime.utcnow().isoformat()})
                 self.producer.flush()
 
                 # Mark url as visited
@@ -54,4 +55,3 @@ class FoxNewsSpider(BaseSpider):
                 # Follow links to other pages recursively
                 for link in response.css('a::attr(href)').getall():
                     yield response.follow(link, callback=self.parse)
-

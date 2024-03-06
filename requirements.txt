@@ -3,3 +3,5 @@ python-dotenv>=0.14.0, <0.15
 confluent_kafka>=2.1.1, <2.2
 fastapi>=0.110.0, <0.111
 email-validator>=2.1.0, <2.2
+uvicorn>=0.27.1, <0.28
+redis[hiredis]>=5.0.0, <5.1
