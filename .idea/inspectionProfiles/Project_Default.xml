@@ -1,0 +1,23 @@
+<component name="InspectionProjectProfileManager">
+  <profile version="1.0">
+    <option name="myName" value="Project Default" />
+    <inspection_tool class="PyTypeCheckerInspection" enabled="false" level="WARNING" enabled_by_default="false" />
+    <inspection_tool class="PyUnresolvedReferencesInspection" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="ignoredIdentifiers">
+        <list>
+          <option value="tuple.model_dir" />
+          <option value="tuple.trained_model_path" />
+          <option value="tuple.train_batch_size" />
+          <option value="tuple.eval_batch_size" />
+          <option value="tuple.warmup_steps" />
+          <option value="tuple.output_data_dir" />
+          <option value="tuple.learning_rate" />
+          <option value="tuple.logging_steps" />
+          <option value="tuple.train_dir" />
+          <option value="tuple.input_data_path" />
+          <option value="tuple.output_data_path" />
+        </list>
+      </option>
+    </inspection_tool>
+  </profile>
+</component>

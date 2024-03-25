@@ -5,13 +5,14 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    command: [ "uvicorn", "api.main:app", "--host", "0.0.0.0", "--port", "8000" , "--workers", "3"]
+    command: [ "uvicorn", "api.main:app", "--host", "0.0.0.0", "--port", "8000" , "--workers", "2"]
     networks:
       - app-network
     volumes:
-      - api-data:/var/api-data
+      - api-data:/var/lib/api-data
     depends_on:
       - redis
+      - zookeeper
       - kafka
       - pinecone
       - postgres
