@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: [ "uvicorn", "api.main:app", "--host", "0.0.0.0", "--port", "8000" , "--workers", "3"]
+    networks:
+      - app-network
+    volumes:
+      - api-data:/var/api-data
+    depends_on:
+      - redis
+      - kafka
+      - pinecone
+      - postgres
+    env_file:
+      - .env
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+  kafka:
+    image: docker.io/bitnami/kafka:3.7
+    restart: always
+    ports:
+      - "9092:9092"
+    volumes:
+      - kafka_data:/var/kafka
+    env_file:
+      - .env
+
+networks:
+  app-network:
+    driver:  bridge
+
+volumes:
+  api-data
+  kafka_data
