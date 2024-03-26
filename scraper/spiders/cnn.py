@@ -17,7 +17,7 @@ class CNNSpider(BaseSpider):
     def start_requests(self):
         """
         Start the scraping process
-        :return:
+        :return: Generator
         """
         yield scrapy.Request(url=self.base_url, callback=self.parse)
 
@@ -27,7 +27,7 @@ class CNNSpider(BaseSpider):
         politics webpage.
         :param response: response from the scraped web page
         :param kwargs: additional keyword arguments
-        :return:
+        :return: generator
         """
 
         # Check whether the webpage url matches the `politics` regex

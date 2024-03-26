@@ -9,10 +9,9 @@ services:
     networks:
       - app-network
     volumes:
-      - api-data:/var/lib/api-data
+      - api-data:/var/api-data
     depends_on:
       - redis
-      - zookeeper
       - kafka
       - pinecone
       - postgres
@@ -23,13 +22,19 @@ services:
     container_name: redis
     ports:
       - "6379:6379"
+    networks:
+      - app-network
     volumes:
-      - redis_data:/data
+      - redis_data:/var/cache
+    env_file:
+      - .env
   kafka:
     image: docker.io/bitnami/kafka:3.7
     restart: always
     ports:
       - "9092:9092"
+    networks:
+      - app-network
     volumes:
       - kafka_data:/var/kafka
     env_file:
