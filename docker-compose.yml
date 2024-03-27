@@ -14,7 +14,7 @@ services:
       - redis
       - kafka
       - vectordb
-      - postgres
+      - mongodb
     env_file:
       - .env
   redis:
@@ -48,13 +48,31 @@ services:
       - app-network
     volumes:
       - vectordb:/var/chromadb
+  mongodb:
+    image: mongo:7.0.7
+    restart: always
+    env_file:
+      - .env
+    volumes:
+      - mongodb_data:/var/mongodb
+
+  mongo-express:
+    image: mongo-express
+    restart: always
+    ports:
+      - 8081:8081
+    depends_on:
+      - mongodb
+    env_file:
+      - .env
 
 networks:
   app-network:
     driver:  bridge
 
 volumes:
-  api-data
-  redis_data
-  kafka_data
-  vectordb
+  api-data:
+  redis_data:
+  kafka_data:
+  vectordb:
+  mongodb_data:
