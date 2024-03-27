@@ -8,6 +8,6 @@ RUN pip3 install --upgrade pip &&  \
     pip install -r requirements.txt
 COPY . /app
 
-EXPOSE 8000
+EXPOSE 8080
 
 ENV PYTHONPATH="$PYTHONPATH:/app"

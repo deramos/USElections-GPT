@@ -5,7 +5,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    command: [ "uvicorn", "api.main:app", "--host", "0.0.0.0", "--port", "8000" , "--workers", "2"]
+    command: [ "uvicorn", "api.main:app", "--host", "0.0.0.0", "--port", "8080" , "--workers", "2"]
     networks:
       - app-network
     volumes:
@@ -13,7 +13,7 @@ services:
     depends_on:
       - redis
       - kafka
-      - pinecone
+      - vectordb
       - postgres
     env_file:
       - .env
@@ -39,6 +39,15 @@ services:
       - kafka_data:/var/kafka
     env_file:
       - .env
+  vectordb:
+    image: chromadb/chroma:0.4.25.dev93
+    restart: always
+    ports:
+      - "8000:8000"
+    networks:
+      - app-network
+    volumes:
+      - vectordb:/var/chromadb
 
 networks:
   app-network:
@@ -46,4 +55,6 @@ networks:
 
 volumes:
   api-data
+  redis_data
   kafka_data
+  vectordb
