@@ -1,3 +1,5 @@
+import logging
+
 import scrapy
 from typing import Any
 from config import config
@@ -5,12 +7,15 @@ from scrapy.http import Response
 from confluent_kafka import Producer
 from dbservices.redisservice import RedisService
 
+logging.basicConfig(level=logging.INFO)
+
 
 class BaseSpider(scrapy.Spider):
     name = None
     base_url = None
     redis_key = 'base-spider-topic'
     politics_url_pattern = ''
+    logger = logging.getLogger(__name__)
     redis_client = RedisService.get_client()
     producer = Producer({'bootstrap.servers': config.KAFKA_BROKER})
 
@@ -34,7 +39,7 @@ class BaseSpider(scrapy.Spider):
             raise ValueError(f"Redis key cannot be  '{self.redis_key}'. Change it to proceed.")
         self.redis_client.sadd(self.redis_key, url)
 
-    def start_requests(self):
+    def start_requests(self) -> Any:
         raise NotImplementedError
 
     def parse(self, response: Response, **kwargs: Any) -> Any:

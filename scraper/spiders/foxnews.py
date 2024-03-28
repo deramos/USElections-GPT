@@ -5,12 +5,14 @@ from config import config
 from .base import BaseSpider
 from datetime import datetime
 from scrapy.http import Response
+from dbservices.mongoservice import MongoService
 
 
 class FoxNewsSpider(BaseSpider):
     name = 'FoxNews Crawl Spider'
     base_url = 'https://www.foxnews.com/politics/'
-    redis_key = 'foxnews-visited'
+    db_collection_name = 'foxnews'
+    redis_key = f'{db_collection_name}-visited'
     kafka_topic = config.KAFKA_TOPIC
     politics_url_pattern = r'https://www\.foxnews\.com/politics/[\w-]+'
 
@@ -41,13 +43,19 @@ class FoxNewsSpider(BaseSpider):
                 content = response.css('p::text').getall()
 
                 # Send data to Kafka topic
-                self.producer.produce(
-                    self.kafka_topic,
-                    value={'title': title,
-                           'content': content,
-                           'url': response.url,
-                           'created_at': datetime.utcnow().isoformat()})
-                self.producer.flush()
+                # self.producer.produce(self.kafka_topic, ...)
+                # self.producer.flush()
+
+                # Save to MongoDB database
+                MongoService.insert_data(
+                    collection_name=self.db_collection_name,
+                    data=[
+                        {'title': title,
+                         'raw_content': content,
+                         'url': response.url,
+                         'created_at': datetime.utcnow().isoformat()
+                         }]
+                )
 
                 # Mark url as visited
                 self.mark_url_visited(response.url)
