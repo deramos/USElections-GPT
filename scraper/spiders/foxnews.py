@@ -9,7 +9,7 @@ from dbservices.mongoservice import MongoService
 
 
 class FoxNewsSpider(BaseSpider):
-    name = 'FoxNews Spider'
+    name = 'FoxNewsSpider'
     base_url = 'https://www.foxnews.com/politics/'
     db_collection_name = 'foxnews'
     redis_key = f'{db_collection_name}-visited'

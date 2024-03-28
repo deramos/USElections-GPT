@@ -14,3 +14,4 @@ def home():
 @app.get('/health')
 def health():
     return {"name": "US Elections API", 'status': 'running'}
+

@@ -9,7 +9,7 @@ from dbservices.mongoservice import MongoService
 
 
 class CNNSpider(BaseSpider):
-    name = 'CNN Spider'
+    name = 'CNNSpider'
     base_url = 'https://edition.cnn.com/'
     db_collection_name = 'cnn'
     redis_key = f'{db_collection_name}-visited'

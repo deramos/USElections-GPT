@@ -7,3 +7,4 @@ uvicorn>=0.27.1, <0.28
 redis[hiredis]>=5.0.0, <5.1
 pymongo>=4.6.2, <4.7
 chromadb>=0.4.24, <0.5
+twisted>=23.10.0, <23.11

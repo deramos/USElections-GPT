@@ -11,15 +11,11 @@ logging.basicConfig(level=logging.INFO)
 
 
 class SpidersEnum(enum.Enum):
-    FoxNewsSpider = 'FoxNews Spider'
-    CNNSpider = 'CNN Spider'
+    FoxNewsSpider = 'foxnews'
+    CNNSpider = 'cnn'
 
-    @classmethod
-    def get_class_name(cls, value):
-        for member in cls:
-            if member.value == value:
-                return member.name
-        raise ValueError(f"Invalid enum value: {value}")
+    def __str__(self):
+        return self.name
 
 
 class BaseSpider(scrapy.Spider):
