@@ -7,11 +7,12 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8080:8080"
-    command: [ "uvicorn", "api.main:app", "--host", "0.0.0.0", "--port", "8080" , "--workers", "2"]
+    command: [ "uvicorn", "api.main:app", "--host", "0.0.0.0", "--port", "8080" , "--workers", "2", "--reload"]
     networks:
       - app-network
     volumes:
-      - api-data:/var/api-data
+      - ./:/app
+      - api_data:/var/api-data
     depends_on:
       - redis
       - kafka
@@ -72,12 +73,21 @@ services:
     env_file:
       - .env
 
+#  airflow:
+#    image: apache/airflow:slim-2.9.0b2-python3.9
+#    restart: always
+#    networks:
+#      - app-network
+#    env_file:
+#      - .env
+
+
 networks:
   app-network:
     driver:  bridge
 
 volumes:
-  api-data:
+  api_data:
   redis_data:
   kafka_data:
   vectordb:

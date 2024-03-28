@@ -1,6 +1,6 @@
-import logging
-
+import enum
 import scrapy
+import logging
 from typing import Any
 from config import config
 from scrapy.http import Response
@@ -8,6 +8,18 @@ from confluent_kafka import Producer
 from dbservices.redisservice import RedisService
 
 logging.basicConfig(level=logging.INFO)
+
+
+class SpidersEnum(enum.Enum):
+    FoxNewsSpider = 'FoxNews Spider'
+    CNNSpider = 'CNN Spider'
+
+    @classmethod
+    def get_class_name(cls, value):
+        for member in cls:
+            if member.value == value:
+                return member.name
+        raise ValueError(f"Invalid enum value: {value}")
 
 
 class BaseSpider(scrapy.Spider):
