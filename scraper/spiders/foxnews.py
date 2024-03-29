@@ -11,8 +11,8 @@ from dbservices.mongoservice import MongoService
 class FoxNewsSpider(BaseSpider):
     name = 'FoxNewsSpider'
     base_url = 'https://www.foxnews.com/politics/'
-    db_collection_name = 'foxnews'
-    redis_key = f'{db_collection_name}-visited'
+    db_collection_name = 'raw-news'
+    redis_key = f'foxnews-visited'
     kafka_topic = config.KAFKA_TOPIC
     politics_url_pattern = r'https://www\.foxnews\.com/politics/[\w-]+'
 
@@ -53,6 +53,7 @@ class FoxNewsSpider(BaseSpider):
                         {'title': title,
                          'raw_content': content,
                          'url': response.url,
+                         'source': 'Fox News',
                          'created_at': datetime.utcnow().isoformat()
                          }]
                 )

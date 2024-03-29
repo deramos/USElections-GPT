@@ -6,6 +6,10 @@ load_dotenv(find_dotenv())
 # Redis Config
 REDIS_BROKER_URL = os.getenv("REDIS_BROKER")
 
+# ScrapyD Config
+SCRAPYD_SERVER = os.getenv("SCRAPYD_SERVER")
+SCRAPYD_PROJECT_NAME = 'spider'
+
 # Kafka Config
 KAFKA_BROKER = os.getenv('KAFKA_BROKER')
 KAFKA_TOPIC = os.getenv('KAFKA_TOPIC')

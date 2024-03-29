@@ -1,13 +1,16 @@
+# FastAPI RestAPI Wrapper to interact with Scrapyd Server using the
+# scrapyd-api library. With these endpoints, spiders can be started,
+# stopped, and deleted. We can also check the status of running spider
+# jobs.
+
+__author__ = 'Chidera'
+
 import logging
-import os
+from config import config
 from fastapi import APIRouter
-from scrapy import spiderloader
-from scrapy.crawler import CrawlerRunner
+from scrapyd_api import ScrapydAPI
 from fastapi.responses import JSONResponse
-from scrapy.utils.project import get_project_settings
 from scraper.spiders.base import SpidersEnum
-from pydantic import BaseModel
-import asyncio
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -17,40 +20,52 @@ router = APIRouter(
     tags=["scrapers"],
 )
 
-settings_path = "scraper.settings"
-os.environ.setdefault('SCRAPY_SETTINGS_MODULE', settings_path)
-scrapy_settings = get_project_settings()
-spider_loader = spiderloader.SpiderLoader(settings=scrapy_settings)
-
-runners = {}  # Dictionary to store CrawlerRunner instances for each spider
-lock = asyncio.Lock()  # Asynchronous lock for thread safety
+scrapy_client = ScrapydAPI(target=config.SCRAPYD_SERVER)
 
 
 @router.get('/list_spiders')
 def list_spiders():
-    return {'spiders': spider_loader.list()}
+    """
+    Returns the list of news article crawlers that exist in the scraper project
+    :return:
+    """
+    jobs = scrapy_client.list_jobs(project=config.SCRAPYD_PROJECT_NAME)
+    spiders = scrapy_client.list_spiders(project=config.SCRAPYD_PROJECT_NAME)
+
+    return JSONResponse(
+        content={'spiders': [
+            {'name': spider,
+             'running': True if any(job['spider'] == spider for job in jobs['running']) else False
+             } for spider in spiders]},
+        status_code=200
+    )
 
 
 @router.get('/{scraper_name}/start')
 async def start_scraper(scraper_name: SpidersEnum):
     spider_name = str(scraper_name)
 
-    if spider_name in spider_loader.list():
-        async with lock:
-            if spider_name not in runners:
-                try:
-                    runner = CrawlerRunner(scrapy_settings)
-                    runners[spider_name] = runner
-                    thread = runner.crawl(spider_name)
-                    await thread.addBoth(lambda _: runners.pop(spider_name, None))
-                    logger.info(f'Started {spider_name} crawler')
-                    return JSONResponse(content={"message": f"Spider '{scraper_name}' started successfully"},
-                                        status_code=200)
-                except Exception as e:
-                    logger.error(f"Error starting spider '{scraper_name}': {e}")
-                    return JSONResponse(content={"message": f"Error starting spider '{scraper_name}'"}, status_code=500)
-            else:
-                return JSONResponse(content={"message": f"Spider '{scraper_name}' is already running"}, status_code=400)
+    jobs = scrapy_client.list_jobs(project=config.SCRAPYD_PROJECT_NAME)
+    spiders = scrapy_client.list_spiders(project=config.SCRAPYD_PROJECT_NAME)
+
+    if spider_name in spiders:
+        try:
+            # check if spider is running
+            if any(job['spider'] == spider_name for job in jobs['running']):
+                return JSONResponse(content={"message": f"Spider '{scraper_name}' is already running"},
+                                    status_code=400)
+
+            # start crawling
+            job_id = scrapy_client.schedule(config.SCRAPYD_PROJECT_NAME, scraper_name)
+            logger.info(f'Started {spider_name} crawler')
+
+            return JSONResponse(content={"message": f"Spider '{scraper_name}' started successfully",
+                                         "job_id": job_id},
+                                status_code=200)
+        except Exception as e:
+            logger.error(f"Error starting spider '{scraper_name}': {e}")
+            return JSONResponse(content={"message": f"Error starting spider '{scraper_name}'"}, status_code=500)
+
     else:
         return JSONResponse(content={"message": f"Spider '{scraper_name}' not found"}, status_code=400)
 
@@ -59,25 +74,21 @@ async def start_scraper(scraper_name: SpidersEnum):
 async def stop_spider(scraper_name: SpidersEnum):
     spider_name = str(scraper_name)
 
-    if spider_name in spider_loader.list():
-        async with lock:
-            if spider_name in runners:
-                runner = runners[spider_name]
-                if runner.crawler.crawling:
-                    try:
-                        runner.crawler.engine.close_spider(runner.crawler.spider, reason='Stopped from API')
-                        logger.info(f"Spider '{scraper_name}' stopped successfully")
-                        return JSONResponse(content={"message": f"Spider '{scraper_name}' stopped successfully"},
-                                            status_code=200)
-                    except Exception as e:
-                        logger.error(f"Error stopping spider '{scraper_name}': {e}")
-                        return JSONResponse(content={"message": f"Error stopping spider '{scraper_name}'"},
-                                            status_code=500)
-                else:
-                    del runners[spider_name]
-                    return JSONResponse(content={"message": f"Spider '{scraper_name}' not running"}, status_code=400)
-            else:
-                return JSONResponse(content={"message": f"Spider '{scraper_name}' not running"}, status_code=400)
+    jobs = scrapy_client.list_jobs(project=config.SCRAPYD_PROJECT_NAME)['running']
+    spiders = scrapy_client.list_spiders(project=config.SCRAPYD_PROJECT_NAME)
+
+    if spider_name in spiders:
+        for job in jobs:
+            if job['spider'] == spider_name:
+                try:
+                    scrapy_client.cancel(config.SCRAPYD_PROJECT_NAME, job['id'])
+                    return JSONResponse(content={"message": f"Spider '{spider_name}' stopped successfully"},
+                                        status_code=200)
+                except Exception as e:
+                    logger.error(f"Error starting spider '{spider_name}': {e}")
+                    return JSONResponse(content={"message": f"Error starting spider '{spider_name}'"},
+                                        status_code=500)
+        return JSONResponse(content={"message": f"Spider '{scraper_name}' not running"}, status_code=400)
     else:
         return JSONResponse(content={"message": f"Spider '{scraper_name}' not found"}, status_code=400)
 
@@ -85,25 +96,29 @@ async def stop_spider(scraper_name: SpidersEnum):
 @router.get('/{scraper_name}/status')
 async def check_scraper_status(scraper_name: SpidersEnum):
     spider_name = str(scraper_name)
+    result, break_outer = {}, False
+    jobs = scrapy_client.list_jobs(project=config.SCRAPYD_PROJECT_NAME)
+    spiders = scrapy_client.list_spiders(project=config.SCRAPYD_PROJECT_NAME)
 
-    if spider_name in spider_loader.list():
-        async with lock:
-            if spider_name in runners:
-                runner = runners[spider_name]
-                if runner.crawler.crawling and runner.crawler.spider.name == spider_name:
-                    status = "running"
-                else:
-                    status = "not running"
-            else:
-                status = "not running"
-        return JSONResponse(content={"message": f"Spider '{scraper_name}' {status}"}, status_code=200)
+    if spider_name in spiders:
+        for job_status, job_data in jobs.items():
+            for job in job_data:
+                if job['spider'] == spider_name:
+                    result['name'] = spider_name
+                    result['job_id'] = job.get('id')
+                    result['status'] = job_status
+                    break_outer = True
+                    break
+            if break_outer:
+                break
+        return JSONResponse(content=result, status_code=200)
     else:
         return JSONResponse(content={"message": f"Spider '{scraper_name}' not found"}, status_code=400)
 
 
 @router.on_event("shutdown")
 async def shutdown_event():
-    async with lock:
-        for runner in runners.values():
-            if runner.crawler.crawling:
-                runner.crawler.engine.close_spider(runner.crawler.spider, reason='Application shutdown')
+    jobs = scrapy_client.list_jobs(project=config.SCRAPYD_PROJECT_NAME)['running']
+
+    for job in jobs:
+        scrapy_client.cancel(config.SCRAPYD_PROJECT_NAME, job['id'])
