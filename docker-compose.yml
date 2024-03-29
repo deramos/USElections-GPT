@@ -28,7 +28,7 @@ services:
     ports:
       - "6800:6800"
     command: >
-      sh -c "scrapyd && scrapy-deploy default"
+      sh -c "scrapyd && scrapy-deploy default && scrapydweb"
     networks:
       - app-network
   redis:
