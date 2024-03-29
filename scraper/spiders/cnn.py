@@ -11,8 +11,8 @@ from dbservices.mongoservice import MongoService
 class CNNSpider(BaseSpider):
     name = 'CNNSpider'
     base_url = 'https://edition.cnn.com/'
-    db_collection_name = 'cnn'
-    redis_key = f'{db_collection_name}-visited'
+    db_collection_name = 'raw-news'
+    redis_key = 'cnn-visited'
     kafka_topic = config.KAFKA_TOPIC
     politics_url_pattern = r'https://\w+\.cnn\.com/\d{4}/\d{2}/\d{2}/politics/[\w-]+'
 
@@ -53,6 +53,7 @@ class CNNSpider(BaseSpider):
                         {'title': title,
                          'raw_content': content,
                          'url': response.url,
+                         'source': 'CNN',
                          'created_at': datetime.utcnow().isoformat()
                          }]
                 )

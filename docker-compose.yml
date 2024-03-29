@@ -14,12 +14,23 @@ services:
       - ./:/app
       - api_data:/var/api-data
     depends_on:
+      - scrapyd
       - redis
       - kafka
       - vectordb
       - mongodb
     env_file:
       - .env
+  scrapyd:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "6800:6800"
+    command: >
+      sh -c "scrapyd && scrapy-deploy default"
+    networks:
+      - app-network
   redis:
     image: redis:latest
     container_name: redis
