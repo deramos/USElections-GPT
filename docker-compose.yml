@@ -27,6 +27,7 @@ services:
       dockerfile: Dockerfile
     ports:
       - "6800:6800"
+      - "5000:5000"
     command: >
       sh -c "scrapyd && scrapy-deploy default && scrapydweb"
     networks:
