@@ -29,7 +29,7 @@ services:
       - "6800:6800"
       - "5000:5000"
     command: >
-      sh -c "scrapyd && scrapy-deploy default && scrapydweb"
+      sh -c "scrapyd & scrapyd-deploy default & scrapydweb"
     networks:
       - app-network
   redis:
@@ -79,7 +79,7 @@ services:
     networks:
       - app-network
     ports:
-      - 8081:8081
+      - "8081:8081"
     depends_on:
       - mongodb
     env_file:
