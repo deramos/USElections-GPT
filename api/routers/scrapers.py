@@ -32,6 +32,8 @@ def list_spiders():
     jobs = scrapy_client.list_jobs(project=config.SCRAPYD_PROJECT_NAME)
     spiders = scrapy_client.list_spiders(project=config.SCRAPYD_PROJECT_NAME)
 
+    logger.info("Spider Jobs ", jobs)
+
     return JSONResponse(
         content={'spiders': [
             {'name': spider,

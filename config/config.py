@@ -8,7 +8,7 @@ REDIS_BROKER_URL = os.getenv("REDIS_BROKER")
 
 # ScrapyD Config
 SCRAPYD_SERVER = os.getenv("SCRAPYD_SERVER")
-SCRAPYD_PROJECT_NAME = 'spider'
+SCRAPYD_PROJECT_NAME = 'scraper'
 
 # Kafka Config
 KAFKA_BROKER = os.getenv('KAFKA_BROKER')
