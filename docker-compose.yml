@@ -18,7 +18,7 @@ services:
       - redis
       - kafka
       - vectordb
-      - mongodb
+      - mongo
     env_file:
       - .env
   scrapyd:
@@ -27,8 +27,20 @@ services:
       dockerfile: Dockerfile
     ports:
       - "6800:6800"
+    command: [ "scrapyd"]
+    networks:
+      - app-network
+  scrapyd-web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      scrapyd:
+        condition: service_started
+    ports:
       - "5000:5000"
-    command: /usr/bin/supervisord -c /app/scrapyd-supervisor.conf
+    command: >
+      sh -c "scrapyd-deploy & scrapydweb"
     networks:
       - app-network
   redis:
@@ -62,9 +74,11 @@ services:
       - app-network
     volumes:
       - vectordb:/var/chromadb
-  mongodb:
+  mongo:
     image: mongo:7.0.7
     restart: always
+    ports:
+      - "27017:27017"
     networks:
       - app-network
     env_file:
@@ -80,7 +94,8 @@ services:
     ports:
       - "8081:8081"
     depends_on:
-      - mongodb
+      mongo:
+        condition: service_started
     env_file:
       - .env
 
