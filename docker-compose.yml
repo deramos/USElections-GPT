@@ -1,13 +1,31 @@
 version: '3.8'
 
+x-airflow-common:
+  &airflow-common
+  image: apache/airflow:2.8.4
+  env_file:
+    - .env
+  volumes:
+    - ./airflow/dags:/opt/airflow/dags
+    - ./airflow/logs:/opt/airflow/logs
+    - ./airflow/config:/opt/airflow/config
+    - $./airflow/plugins:/opt/airflow/plugins
+  user: "${AIRFLOW_UID:-50000}:0"
+  depends_on:
+    &airflow-common-depends-on
+    redis:
+      condition: service_healthy
+    postgres:
+      condition: service_healthy
+
 services:
   api:
     build:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "8080:8080"
-    command: [ "uvicorn", "api.main:app", "--host", "0.0.0.0", "--port", "8080" , "--workers", "2", "--reload"]
+      - "9000:9000"
+    command: [ "uvicorn", "api.main:app", "--host", "0.0.0.0", "--port", "9000" , "--workers", "2", "--reload"]
     networks:
       - app-network
     volumes:
@@ -21,6 +39,7 @@ services:
       - mongo
     env_file:
       - .env
+
   scrapyd:
     build:
       context: .
@@ -30,6 +49,7 @@ services:
     command: [ "scrapyd"]
     networks:
       - app-network
+
   scrapyd-web:
     build:
       context: .
@@ -43,6 +63,7 @@ services:
       sh -c "scrapyd-deploy & scrapydweb"
     networks:
       - app-network
+
   redis:
     image: redis:latest
     container_name: redis
@@ -54,6 +75,14 @@ services:
       - redis_data:/var/cache
     env_file:
       - .env
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 10s
+      timeout: 30s
+      retries: 50
+      start_period: 30s
+    restart: always
+
   kafka:
     image: docker.io/bitnami/kafka:3.7
     restart: always
@@ -65,6 +94,7 @@ services:
       - kafka_data:/var/kafka
     env_file:
       - .env
+
   vectordb:
     image: chromadb/chroma:0.4.25.dev93
     restart: always
@@ -74,6 +104,7 @@ services:
       - app-network
     volumes:
       - vectordb:/var/chromadb
+
   mongo:
     image: mongo:7.0.7
     restart: always
@@ -99,13 +130,74 @@ services:
     env_file:
       - .env
 
-#  airflow:
-#    image: apache/airflow:slim-2.9.0b2-python3.9
-#    restart: always
-#    networks:
-#      - app-network
-#    env_file:
-#      - .env
+  # --------------- Airflow Services ---------------- #
+
+  postgres:
+    image: postgres:13
+    env_file:
+      - .env
+    networks:
+      - app-network
+    volumes:
+      - postgres-db-volume:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-U", "airflow" ]
+      interval: 5s
+      retries: 5
+    restart: always
+
+  airflow-webserver:
+    <<: *airflow-common
+    command: webserver
+    ports:
+      - 80:8080
+
+    healthcheck:
+      test: [ "CMD", "curl", "--fail", "http://localhost:8080/health" ]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+    restart: always
+
+  airflow-scheduler:
+    <<: *airflow-common
+    command: scheduler
+    healthcheck:
+      test: [ "CMD-SHELL", 'airflow jobs check --job-type SchedulerJob --hostname "$${HOSTNAME}"' ]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+    restart: always
+
+  airflow-worker:
+    <<: *airflow-common
+    command: celery worker
+    healthcheck:
+      test:
+        - "CMD-SHELL"
+        - 'celery --app airflow.executors.celery_executor.app inspect ping -d "celery@$${HOSTNAME}"'
+      interval: 10s
+      timeout: 10s
+      retries: 5
+    restart: always
+
+  airflow-init:
+    <<: *airflow-common
+    command: version
+    env_file:
+      - .env
+
+  flower:
+    <<: *airflow-common
+    command: celery flower
+    ports:
+      - "5555:5555"
+    healthcheck:
+      test: [ "CMD", "curl", "--fail", "http://localhost:5555/" ]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+    restart: always
 
 
 networks:
@@ -118,3 +210,4 @@ volumes:
   kafka_data:
   vectordb:
   mongodb_data:
+  postgres-db-volume:

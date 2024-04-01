@@ -20,7 +20,7 @@ RUN pip3 install --upgrade pip &&  \
 COPY . /app
 
 # expose project ports
-EXPOSE 6800 5000 8080
+EXPOSE 6800 5000 9000
 
 # set python path
 ENV PYTHONPATH="$PYTHONPATH:/app"
