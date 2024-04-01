@@ -14,7 +14,7 @@ class FoxNewsSpider(BaseSpider):
     db_collection_name = 'raw-news'
     redis_key = f'foxnews-visited'
     kafka_topic = config.KAFKA_TOPIC
-    politics_url_pattern = r'https://www\.foxnews\.com/politics/[\w-]+'
+    politics_url_pattern = r'https://www\.foxnews\.com/politics/(?:\w|-)+'
 
     def start_requests(self):
         """
@@ -32,8 +32,9 @@ class FoxNewsSpider(BaseSpider):
         :return:
         """
 
-        # Check whether the webpage url matches the `politics` regex
-        if re.match(self.politics_url_pattern, response.url):
+        # Check whether the webpage url matches the `politics` regex and published/modified in 2024
+        if (re.match(self.politics_url_pattern, response.url) and
+                self.get_publication_date(response).year == 2024):
 
             # If the url hasn't been visited yet
             if not self.is_url_visited(response.url):
@@ -64,3 +65,9 @@ class FoxNewsSpider(BaseSpider):
                 # Follow links to other pages recursively
                 for link in response.css('a::attr(href)').getall():
                     yield response.follow(link, callback=self.parse)
+
+    @staticmethod
+    def get_publication_date(response):
+        pub_date_str = response.css("span.article-date time::text").get().strip()
+        pub_datetime = datetime.strptime(pub_date_str, '%B %d, %Y %I:%M%p %Z')
+        return pub_datetime
