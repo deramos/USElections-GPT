@@ -7,6 +7,10 @@ class RedisService:
 
     @classmethod
     def get_client(cls):
+        """
+        Creates an instance of a redis client if the existing client is None
+        :return: redis_client -> Redis
+        """
         if not cls.redis_client:
             try:
                 cls.redis_client = redis.from_url(config.REDIS_BROKER_URL)

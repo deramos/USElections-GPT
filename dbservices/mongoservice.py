@@ -27,7 +27,7 @@ class MongoService:
     @classmethod
     def insert_data(cls, collection_name: str, data: list[dict]) -> bool:
         """
-        Inserts data into a mongo collection in the database
+        Inserts data into a mongo collection
         :param collection_name:
         :param data:
         :return: bool -> True if insert is successful
