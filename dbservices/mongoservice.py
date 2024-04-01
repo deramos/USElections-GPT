@@ -14,7 +14,7 @@ class MongoService:
     @classmethod
     def get_client_and_db(cls):
         """
-        Makes instances of the MongDB Client and MongoDB underlying database if the client is None
+        Makes instances of the MongDB Client and the Mongo underlying database if the client is None
         :return: A class instance of the Mongo client and the db instance
             cls.client: MongoClient
             cls.mongo_db: Database -> Mongo underlying database

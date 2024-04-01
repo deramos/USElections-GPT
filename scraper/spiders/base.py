@@ -13,6 +13,7 @@ logging.basicConfig(level=logging.INFO)
 class SpidersEnum(enum.Enum):
     FoxNewsSpider = 'foxnews'
     CNNSpider = 'cnn'
+    NPRNewsSpider = 'npr'
 
     def __str__(self):
         return self.name
