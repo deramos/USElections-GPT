@@ -10,7 +10,7 @@ from dbservices.mongoservice import MongoService
 
 class CNNSpider(BaseSpider):
     name = 'CNNSpider'
-    base_url = 'https://edition.cnn.com/'
+    base_url = 'https://edition.cnn.com/politics/'
     db_collection_name = 'raw-news'
     redis_key = 'cnn-visited'
     kafka_topic = config.KAFKA_TOPIC
