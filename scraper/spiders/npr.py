@@ -31,6 +31,7 @@ class NPRNewsSpider(BaseSpider):
         :param kwargs: additional keyword arguments
         :return:
         """
+        self.logger.info(f"Scraping {__name__} article: {response.url}")
 
         # Check whether the webpage url matches the `politics` regex
         if re.match(self.politics_url_pattern, response.url):
@@ -61,6 +62,6 @@ class NPRNewsSpider(BaseSpider):
                 # Mark url as visited
                 self.mark_url_visited(response.url)
 
-                # Follow links to other pages recursively
-                for link in response.css('a::attr(href)').getall():
-                    yield response.follow(link, callback=self.parse)
+        # Follow links to other pages recursively
+        for link in response.css('a::attr(href)').getall():
+            yield response.follow(link, callback=self.parse)

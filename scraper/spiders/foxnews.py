@@ -32,6 +32,8 @@ class FoxNewsSpider(BaseSpider):
         :return:
         """
 
+        self.logger.info(f"Scraping {__name__} article: {response.url}")
+
         # Check whether the webpage url matches the `politics` regex and published/modified in 2024
         if (re.match(self.politics_url_pattern, response.url) and
                 self.get_publication_date(response).year == 2024):
@@ -62,9 +64,9 @@ class FoxNewsSpider(BaseSpider):
                 # Mark url as visited
                 self.mark_url_visited(response.url)
 
-                # Follow links to other pages recursively
-                for link in response.css('a::attr(href)').getall():
-                    yield response.follow(link, callback=self.parse)
+        # Follow links to other pages recursively
+        for link in response.css('a::attr(href)').getall():
+            yield response.follow(link, callback=self.parse)
 
     @staticmethod
     def get_publication_date(response):

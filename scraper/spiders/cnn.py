@@ -32,8 +32,10 @@ class CNNSpider(BaseSpider):
         :return: generator
         """
 
-        # Check whether the webpage url matches the `politics` regex
-        if re.match(self.politics_url_pattern, response.url):
+        self.logger.info(f"Scraping {__name__} article: {response.url}")
+
+        # Check whether the webpage is the base url or matches the `politics` regex
+        if response.url == self.base_url or re.match(self.politics_url_pattern, response.url):
 
             # If the url hasn't been visited yet
             if not self.is_url_visited(response.url):
@@ -61,6 +63,6 @@ class CNNSpider(BaseSpider):
                 # Mark url as visited
                 self.mark_url_visited(response.url)
 
-                # Follow links to other pages recursively
-                for link in response.css('a::attr(href)').getall():
-                    yield response.follow(link, callback=self.parse)
+        # Follow links to other pages recursively
+        for link in response.css('a::attr(href)').getall():
+            yield response.follow(link, callback=self.parse)
