@@ -48,7 +48,8 @@ services:
       dockerfile: Dockerfile
     ports:
       - "6800:6800"
-    command: [ "scrapyd"]
+    command: >
+      sh -c "scrapyd & logparser"
     networks:
       - app-network
 
