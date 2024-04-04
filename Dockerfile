@@ -19,6 +19,10 @@ RUN pip3 install --upgrade pip &&  \
 # copy project files
 COPY . /app
 
+# Copy and replace Scrapyd logparser settings
+RUN mkdir -p /var/scrapyd/logs && \
+    cp -f logparser_settings.py /usr/local/lib/python3.9/site-packages/logparser/settings.py
+
 # expose project ports
 EXPOSE 6800 5000 9000
 
