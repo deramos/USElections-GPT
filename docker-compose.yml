@@ -86,6 +86,16 @@ services:
       start_period: 30s
     restart: always
 
+  redis-insight:
+    image: redislabs/redisinsight:latest
+    restart: always
+    networks:
+      - app-network
+    ports:
+      - "8001:8001"
+    volumes:
+      - redis-insight:/data
+
   kafka:
     image: docker.io/bitnami/kafka:3.7
     restart: always
@@ -315,6 +325,7 @@ networks:
 volumes:
   api_data:
   redis_data:
+  redis-insight:
   kafka_data:
   vectordb:
   mongodb_data:
