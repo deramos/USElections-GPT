@@ -2,7 +2,7 @@ import uvicorn
 from fastapi import FastAPI
 from api.routers import scrapers
 
-app = FastAPI(version='1.0', description="US Election GPT APIs")
+app = FastAPI(version='1.0',  title='US Elections GPT API', description="US Election GPT APIs")
 app.include_router(scrapers.router)
 
 
