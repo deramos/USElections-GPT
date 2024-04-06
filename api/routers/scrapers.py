@@ -35,7 +35,7 @@ def list_spiders():
     logger.info("Spider Jobs ", jobs)
 
     return JSONResponse(
-        content={'spiders': [
+        content={'scrapers': [
             {'name': spider,
              'running': True if any(job['spider'] == spider for job in jobs['running']) else False
              } for spider in spiders]},
@@ -59,22 +59,22 @@ async def start_scraper(scraper_name: SpidersEnum):
         try:
             # check if spider is running
             if any(job['spider'] == spider_name for job in jobs['running']):
-                return JSONResponse(content={"message": f"Spider '{scraper_name}' is already running"},
+                return JSONResponse(content={"message": f"Scraper '{scraper_name}' is already running"},
                                     status_code=400)
 
             # start crawling
             job_id = scrapy_client.schedule(config.SCRAPYD_PROJECT_NAME, scraper_name)
             logger.info(f'Started {spider_name} crawler')
 
-            return JSONResponse(content={"message": f"Spider '{scraper_name}' started successfully",
+            return JSONResponse(content={"message": f"Scraper '{scraper_name}' started successfully",
                                          "job_id": job_id},
                                 status_code=200)
         except Exception as e:
-            logger.error(f"Error starting spider '{scraper_name}': {e}")
-            return JSONResponse(content={"message": f"Error starting spider '{scraper_name}'"}, status_code=500)
+            logger.error(f"Error starting Scraper '{scraper_name}': {e}")
+            return JSONResponse(content={"message": f"Error starting Scraper '{scraper_name}'"}, status_code=500)
 
     else:
-        return JSONResponse(content={"message": f"Spider '{scraper_name}' not found"}, status_code=400)
+        return JSONResponse(content={"message": f"Scraper '{scraper_name}' not found"}, status_code=400)
 
 
 @router.get("/{scraper_name}/stop")
@@ -94,15 +94,15 @@ async def stop_spider(scraper_name: SpidersEnum):
             if job['spider'] == spider_name:
                 try:
                     scrapy_client.cancel(config.SCRAPYD_PROJECT_NAME, job['id'])
-                    return JSONResponse(content={"message": f"Spider '{spider_name}' stopped successfully"},
+                    return JSONResponse(content={"message": f"Scraper '{spider_name}' stopped successfully"},
                                         status_code=200)
                 except Exception as e:
-                    logger.error(f"Error starting spider '{spider_name}': {e}")
-                    return JSONResponse(content={"message": f"Error starting spider '{spider_name}'"},
+                    logger.error(f"Error starting Scraper '{spider_name}': {e}")
+                    return JSONResponse(content={"message": f"Error starting Scraper '{spider_name}'"},
                                         status_code=500)
-        return JSONResponse(content={"message": f"Spider '{scraper_name}' not running"}, status_code=400)
+        return JSONResponse(content={"message": f"Scraper '{scraper_name}' not running"}, status_code=400)
     else:
-        return JSONResponse(content={"message": f"Spider '{scraper_name}' not found"}, status_code=400)
+        return JSONResponse(content={"message": f"Scraper '{scraper_name}' not found"}, status_code=400)
 
 
 @router.get('/{scraper_name}/status')
@@ -130,7 +130,7 @@ async def check_scraper_status(scraper_name: SpidersEnum):
                 break
         return JSONResponse(content=result, status_code=200)
     else:
-        return JSONResponse(content={"message": f"Spider '{scraper_name}' not found"}, status_code=400)
+        return JSONResponse(content={"message": f"Scraper '{scraper_name}' not found"}, status_code=400)
 
 
 @router.on_event("shutdown")
