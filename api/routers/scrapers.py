@@ -27,7 +27,7 @@ scrapy_client = ScrapydAPI(target=config.SCRAPYD_SERVER)
 def list_spiders():
     """
     Returns the list of news article crawlers that exist in the scraper project
-    :return:
+    :return: the list of news spiders
     """
     jobs = scrapy_client.list_jobs(project=config.SCRAPYD_PROJECT_NAME)
     spiders = scrapy_client.list_spiders(project=config.SCRAPYD_PROJECT_NAME)
@@ -45,6 +45,11 @@ def list_spiders():
 
 @router.get('/{scraper_name}/start')
 async def start_scraper(scraper_name: SpidersEnum):
+    """
+    Starts a spider
+    :param scraper_name: name of the spider to be started
+    :return: the ID of the started spider job
+    """
     spider_name = str(scraper_name)
 
     jobs = scrapy_client.list_jobs(project=config.SCRAPYD_PROJECT_NAME)
@@ -74,6 +79,11 @@ async def start_scraper(scraper_name: SpidersEnum):
 
 @router.get("/{scraper_name}/stop")
 async def stop_spider(scraper_name: SpidersEnum):
+    """
+    Stops a running spider.
+    :param scraper_name: name of the spider to stop
+    :return: success message
+    """
     spider_name = str(scraper_name)
 
     jobs = scrapy_client.list_jobs(project=config.SCRAPYD_PROJECT_NAME)['running']
@@ -97,6 +107,11 @@ async def stop_spider(scraper_name: SpidersEnum):
 
 @router.get('/{scraper_name}/status')
 async def check_scraper_status(scraper_name: SpidersEnum):
+    """
+    Checks the status of a running spider
+    :param scraper_name: name of the spider
+    :return: status message
+    """
     spider_name = str(scraper_name)
     result, break_outer = {}, False
     jobs = scrapy_client.list_jobs(project=config.SCRAPYD_PROJECT_NAME)
