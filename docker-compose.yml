@@ -36,7 +36,7 @@ services:
     depends_on:
       - scrapyd
       - redis
-      - kafka
+      # - kafka
       - vectordb
       - mongo
     env_file:
