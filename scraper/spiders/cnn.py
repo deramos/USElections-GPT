@@ -15,6 +15,9 @@ class CNNSpider(BaseSpider):
     redis_key = 'cnn-visited'
     kafka_topic = config.KAFKA_TOPIC
     politics_url_pattern = r'https:\/\/edition\.cnn\.com\/2024\/\d{2}/\d{2}/politics\/(?:\w|-)+'
+    stripped_text = [
+        'Cable News Network. A Warner Bros. Discovery Company. All Rights Reserved.CNN Sans ™ & © 2016 Cable News Network.'
+    ]
 
     def start_requests(self):
         """
@@ -39,10 +42,13 @@ class CNNSpider(BaseSpider):
 
             # If the url hasn't been visited yet
             if not self.is_url_visited(response.url):
-
                 # Extract data from the current page
                 title = response.css('title::text').get()
-                content = response.css('p::text').getall()
+                content = ''.join(response.css('p::text').getall())
+
+                # strip stripped_texts from content
+                for line in self.stripped_text:
+                    content = content.lstrip(line)
 
                 # Send data to Kafka topic
                 # self.producer.produce(self.kafka_topic, ...)
