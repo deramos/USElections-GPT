@@ -44,7 +44,8 @@ class CNNSpider(BaseSpider):
             if not self.is_url_visited(response.url):
                 # Extract data from the current page
                 title = response.css('title::text').get()
-                content = ''.join(response.css('p::text').getall())
+                content = response.css('p::text').getall()
+                content = ''.join(line.strip() for line in content)
 
                 # strip stripped_texts from content
                 for line in self.stripped_text:
