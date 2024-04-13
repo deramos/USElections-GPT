@@ -54,4 +54,6 @@ class BaseSpider(scrapy.Spider):
     def parse(self, response: Response, **kwargs: Any) -> Any:
         raise NotImplementedError
 
-    
+    @staticmethod
+    def get_publication_date(response):
+        raise NotImplementedError

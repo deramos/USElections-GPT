@@ -55,6 +55,7 @@ class FoxNewsSpider(BaseSpider):
                     data=[
                         {'title': title,
                          'raw_content': content,
+                         'publication_date': self.get_publication_date(response),
                          'url': response.url,
                          'source': 'Fox News',
                          'created_at': datetime.utcnow().isoformat()

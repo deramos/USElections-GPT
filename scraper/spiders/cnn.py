@@ -62,6 +62,7 @@ class CNNSpider(BaseSpider):
                     data=[
                         {'title': title,
                          'raw_content': content,
+                         'publication_date': self.get_publication_date(response),
                          'url': response.url,
                          'source': 'CNN',
                          'created_at': datetime.utcnow().isoformat()
@@ -74,3 +75,14 @@ class CNNSpider(BaseSpider):
         # Follow links to other pages recursively
         for link in response.css('a::attr(href)').getall():
             yield response.follow(link, callback=self.parse)
+
+    @staticmethod
+    def get_publication_date(response):
+        pub_timestamp = response.css('div.timestamp::text').get()
+
+        if pub_timestamp:
+            pub_timestamp = pub_timestamp.strip().split('Updated')[-1].strip()
+            pub_timestamp = datetime.strptime(pub_timestamp, '%B %d, %Y %I:%M%p %Z')
+            return pub_timestamp
+
+        return None

@@ -54,6 +54,7 @@ class NPRNewsSpider(BaseSpider):
                         {'title': title,
                          'raw_content': content,
                          'url': response.url,
+                         'publication_date': self.get_publication_date(response),
                          'source': 'NPR News',
                          'created_at': datetime.utcnow().isoformat()
                          }]
@@ -65,3 +66,14 @@ class NPRNewsSpider(BaseSpider):
         # Follow links to other pages recursively
         for link in response.css('a::attr(href)').getall():
             yield response.follow(link, callback=self.parse)
+
+    @staticmethod
+    def get_publication_date(response):
+        datetime_string = response.css('time::attr(datetime)').get()
+
+        # Convert the datetime string to a Python datetime object
+        if datetime_string:
+            datetime_obj = datetime.fromisoformat(datetime_string)
+            return datetime_obj
+
+        return None
