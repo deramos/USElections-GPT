@@ -53,3 +53,5 @@ class BaseSpider(scrapy.Spider):
 
     def parse(self, response: Response, **kwargs: Any) -> Any:
         raise NotImplementedError
+
+    
