@@ -10,7 +10,3 @@ class CustomMongoDecoder(json.JSONEncoder):
             return str(obj)
 
         return super(CustomMongoDecoder, self).default(obj)
-
-
-def init_llm():
-   llm_util = LLMUtil
