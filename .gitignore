@@ -163,3 +163,5 @@ cython_debug/
 # Airflow
 airflow/logs
 airflow/logs/*
+
+.DS_Store
