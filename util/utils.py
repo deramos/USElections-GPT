@@ -13,4 +13,4 @@ class CustomMongoDecoder(json.JSONEncoder):
 
 
 def init_llm():
-    return None
+   llm_util = LLMUtil
