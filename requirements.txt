@@ -16,3 +16,4 @@ twisted>=23.10.0, <23.11
 apache-airflow>=2.8.4, <2.9
 itemadapter~=0.8.0
 langchain
+streamlit
