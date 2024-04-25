@@ -24,7 +24,7 @@ async def websocket_handler():
 
 async def main():
     with st.sidebar:
-        st.image("docs/img/background_image.png", caption='Image Source: AI Generated')
+        st.image("docs/img/chat_header_image.png", caption='Image Source: AI Generated')
         # st.write('Image Source: AI Generated', caption='')
         st.write("🇺🇸 RAG based LLM with knowledge of the upcoming November 2024 US electoral process. \n\n"
                  "**Still a work-in-progress**")
