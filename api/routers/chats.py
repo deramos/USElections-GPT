@@ -19,7 +19,7 @@ rag_llm: RunnableWithMessageHistory
 @router.on_event('startup')
 def init_llm():
     """
-    Init Mistral LLM
+    Init Mistral LLM Chatbot
     :return:
     """
     llm_util = chat_util.LLMUtil()

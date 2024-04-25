@@ -1,9 +1,10 @@
 import uvicorn
 from fastapi import FastAPI
-from api.routers import scrapers
+from api.routers import scrapers, chats
 
 app = FastAPI(version='1.0',  title='US Elections GPT API', description="US Election GPT APIs")
 app.include_router(scrapers.router)
+app.include_router(chats.router)
 
 
 @app.get('/', tags=['home'])
