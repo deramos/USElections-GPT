@@ -1,6 +1,7 @@
 # US-Elections-GPT: 
 ### Analyzing and Predicting US Election Trends with GPT
 
+![Header Image](docs/img/background_image.tiff) 
 This project leverages the power of Generative Pre-trained Transformers (GPT) 
 in understanding, analyzing, and predicting trends in US elections. It does this by harnessing the capabilities of 
 state-of-the-art natural language processing (NLP) models to delve into the vast troves of textual data surrounding US 
