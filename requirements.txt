@@ -17,3 +17,4 @@ apache-airflow>=2.8.4, <2.9
 itemadapter~=0.8.0
 langchain
 streamlit
+torch
