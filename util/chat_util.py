@@ -77,6 +77,7 @@ class LLMUtil:
         # get chromadb retriever from vector store
         retriever = self.vector_store.as_retriever()
 
+        # create template for user history prompt
         chat_history_context_prompt = ChatPromptTemplate.from_messages(
             [('system', self.chat_history_prompt),
              MessagesPlaceholder('chat_history'),
@@ -84,6 +85,7 @@ class LLMUtil:
              ]
         )
 
+        # create history aware retriever using chromadb retriever
         history_aware_retriever = create_history_aware_retriever(
             llm_pipeline,
             retriever,
@@ -104,6 +106,7 @@ class LLMUtil:
         # create rag_chain using system and user prompts
         rag_chain = create_retrieval_chain(history_aware_retriever, question_answer_chain)
 
+        # create runnable llm with message history
         rag_chain_llm = RunnableWithMessageHistory(
             rag_chain,
             self.get_message_history,
@@ -114,5 +117,6 @@ class LLMUtil:
 
         return rag_chain_llm
 
-    def get_message_history(self, session_id: str) -> RedisChatMessageHistory:
+    @staticmethod
+    def get_message_history(session_id: str) -> RedisChatMessageHistory:
         return RedisChatMessageHistory(session_id, url=config.REDIS_BROKER_URL)
