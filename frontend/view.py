@@ -24,18 +24,18 @@ async def websocket_handler():
 
 async def main():
     with st.sidebar:
-        st.image("docs/img/chat_header_image.png", caption='Image Source: AI Generated')
+        st.image("docs/img/background_image.png", caption='Image Source: AI Generated')
         # st.write('Image Source: AI Generated', caption='')
         st.write("🇺🇸 RAG based LLM with knowledge of the upcoming November 2024 US electoral process. \n\n"
                  "**Still a work-in-progress**")
 
     st.title("🗳️ US Elections GPT")
-    st.write("I am a political analyst with advanced knowledge of the United States electoral process. I will answer "
-             "every question you have about the upcoming November 2024 US General Elections. I stay up to date by "
+    st.write("I am a political analyst with advanced knowledge of the United States electoral process. I can answer "
+             "any question about the upcoming November 2024 US General Elections. I stay up to date by "
              "sourcing news articles from **CNN**, **FoxNews**, **Politico**, and **NPR**"
-             "\n\n"
-             "*If you lean towards a political spectrum or prefer a particular news source, you can indicate in your "
-             "message query*")
+             "\n\n")
+    st.write("**POLITICAL AFFILIATION:** \n"
+             "*If you lean towards a political spectrum or prefer a particular news source, you can indicate below*")
 
     if "messages" not in st.session_state:
         st.session_state["messages"] = [
