@@ -316,7 +316,7 @@ services:
 #      airflow-init:
 #        condition: service_completed_successfully
 
-  # -------------------- Airflow Services -------------------- #
+# -------------------- Airflow Services -------------------- #
 
 networks:
   app-network:
