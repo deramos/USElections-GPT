@@ -5,6 +5,7 @@ from config import config
 from .base import BaseSpider
 from datetime import datetime
 from scrapy.http import Response
+from scraper.items import NewsItem
 from dbservices.mongoservice import MongoService
 
 
@@ -56,17 +57,19 @@ class CNNSpider(BaseSpider):
                 # self.producer.produce(self.kafka_topic, ...)
                 # self.producer.flush()
 
+                # create scrapy news item object
+                news_item = NewsItem()
+                news_item['title'] = title
+                news_item['raw_content'] = content
+                news_item['publication_date'] = self.get_publication_date(response)
+                news_item['url'] = response.url
+                news_item['source'] = 'Fox News'
+                news_item['created_at'] = datetime.utcnow().isoformat()
+
                 # Save to MongoDB database
                 MongoService.insert_data(
                     collection_name=self.db_collection_name,
-                    data=[
-                        {'title': title,
-                         'raw_content': content,
-                         'publication_date': self.get_publication_date(response),
-                         'url': response.url,
-                         'source': 'CNN',
-                         'created_at': datetime.utcnow().isoformat()
-                         }]
+                    data=[dict(news_item)]
                 )
 
                 # Mark url as visited
