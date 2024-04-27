@@ -15,7 +15,7 @@ class CNNSpider(BaseSpider):
     db_collection_name = 'cnn-raw-news'
     redis_key = 'cnn-visited'
     kafka_topic = config.KAFKA_TOPIC
-    politics_url_pattern = r'https:\/\/edition\.cnn\.com\/2024\/\d{2}/\d{2}/politics\/(?:\w|-)+'
+    politics_url_pattern = r'https:\/\/edition\.cnn\.com\/(?:2023|2024)\/\d{2}/\d{2}/politics\/(?:\w|-)+'
     stripped_text = [
         'Cable News Network. A Warner Bros. Discovery Company. All Rights Reserved.CNN Sans ™ & © 2016 Cable News Network.'
     ]

@@ -15,7 +15,7 @@ class NPRNewsSpider(BaseSpider):
     db_collection_name = 'npr-raw-news'
     redis_key = f'npr-visited'
     kafka_topic = config.KAFKA_TOPIC
-    politics_url_pattern = r'https:\/\/www\.npr\.org\/2024\/\d{2}\/\d{2}\/(?:\w|-)+'
+    politics_url_pattern = r'https:\/\/www\.npr\.org\/(?:2024|2023)\/\d{2}\/\d{2}\/(?:\w|-)+'
 
     def start_requests(self):
         """

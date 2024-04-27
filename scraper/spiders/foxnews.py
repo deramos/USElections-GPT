@@ -37,7 +37,7 @@ class FoxNewsSpider(BaseSpider):
 
         # Check whether the webpage url matches the `politics` regex and published/modified in 2024
         if (re.match(self.politics_url_pattern, response.url) and
-                self.get_publication_date(response).year == 2024):
+                self.get_publication_date(response).year in (2024, 2023)):
 
             # If the url hasn't been visited yet
             if not self.is_url_visited(response.url):
