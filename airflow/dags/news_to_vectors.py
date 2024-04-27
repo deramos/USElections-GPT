@@ -19,7 +19,17 @@ def check_document_count():
     # assert document count is greater than previous count
     assert added_document_count > previous_count
 
-    Variable.set(key='vectordb-document-count', value=previous_count + added_document_count)
+    Variable.set(key='vectordb-document-count', value=(previous_count + added_document_count))
+
+
+def execute_notebook():
+    import papermill as pm
+
+    pm.execute_notebook(
+        input_path=os.path.join(os.path.dirname(os.path.realpath(__file__)), "notebooks/News Summary.ipynb"),
+        output_path=os.path.join(os.path.dirname(os.path.realpath(__file__)), "notebooks/News-Summary-Executed.ipynb"),
+        parameters={"batch_date": {'$gte': start_date_str, '$lte': end_date_str}}
+    )
 
 
 with DAG(
@@ -42,10 +52,15 @@ with DAG(
 
     start = EmptyOperator(task_id='start')
 
-    execute_notebook = PapermillOperator(
-        task_id="run_summarize_notebook",
-        input_nb=os.path.join(os.path.dirname(os.path.realpath(__file__)), "notebooks/News Summary.ipynb"),
-        parameters={"batch_date": {'$gte': start_date_str, '$lte': end_date_str}},
+    # execute_notebook = PapermillOperator(
+    #     task_id="run_summarize_notebook",
+    #     input_nb=os.path.join(os.path.dirname(os.path.realpath(__file__)), "notebooks/News Summary.ipynb"),
+    #     parameters={"batch_date": {'$gte': start_date_str, '$lte': end_date_str}},
+    # )
+
+    execute_notebook = PythonOperator(
+        task_id='run_summarize_notebook',
+        python_callable=execute_notebook
     )
 
     document_count_qa = PythonOperator(
