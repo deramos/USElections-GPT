@@ -54,7 +54,7 @@ with DAG(
 
     # execute_notebook = PapermillOperator(
     #     task_id="run_summarize_notebook",
-    #     input_nb=os.path.join(os.path.dirname(os.path.realpath(__file__)), "notebooks/News Summary.ipynb"),
+    #     input_nb=Path.joinpath(Path(__file__).parents[2], "notebooks/News Summary.ipynb"),
     #     parameters={"batch_date": {'$gte': start_date_str, '$lte': end_date_str}},
     # )
 
