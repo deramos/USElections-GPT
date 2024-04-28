@@ -12,7 +12,7 @@ from dbservices.mongoservice import MongoService
 class NPRNewsSpider(BaseSpider):
     name = 'NPRNewsSpider'
     base_url = 'https://www.npr.org/sections/politics/'
-    db_collection_name = 'npr-raw-news'
+    db_collection_name = 'raw-news'
     redis_key = f'npr-visited'
     kafka_topic = config.KAFKA_TOPIC
     politics_url_pattern = r'https:\/\/www\.npr\.org\/(?:2024|2023)\/\d{2}\/\d{2}\/(?:\w|-)+'

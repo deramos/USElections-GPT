@@ -12,7 +12,7 @@ from dbservices.mongoservice import MongoService
 class FoxNewsSpider(BaseSpider):
     name = 'FoxNewsSpider'
     base_url = 'https://www.foxnews.com/politics/'
-    db_collection_name = 'foxnews-raw-news'
+    db_collection_name = 'raw-news'
     redis_key = f'foxnews-visited'
     kafka_topic = config.KAFKA_TOPIC
     politics_url_pattern = r'https://www\.foxnews\.com/politics/(?:\w|-)+'
