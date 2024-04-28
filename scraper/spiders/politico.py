@@ -9,13 +9,13 @@ from scraper.items import NewsItem
 from dbservices.mongoservice import MongoService
 
 
-class NPRNewsSpider(BaseSpider):
-    name = 'NPRNewsSpider'
-    base_url = 'https://www.npr.org/sections/politics/'
-    db_collection_name = 'npr-raw-news'
-    redis_key = f'npr-visited'
+class PoliticoNewsSpider(BaseSpider):
+    name = 'PoliticoNewsSpider'
+    base_url = 'https://www.politico.com/'
+    db_collection_name = 'raw-news'
+    redis_key = f'politico-visited'
     kafka_topic = config.KAFKA_TOPIC
-    politics_url_pattern = r'https:\/\/www\.npr\.org\/(?:2024|2023)\/\d{2}\/\d{2}\/(?:\w|-)+'
+    politics_url_pattern = r'https:\/\/politico\.com\/news\/(?:2024|2023)\/\d{2}\/\d{2}\/(?:\w|-)+-\d+'
 
     def start_requests(self):
         """
@@ -41,7 +41,7 @@ class NPRNewsSpider(BaseSpider):
             if not self.is_url_visited(response.url):
 
                 # Extract data from the current page
-                title = response.css('title::text').get()
+                title = response.css('h2.headline::text').get()
                 content = response.css('p::text').getall()
 
                 # Send data to Kafka topic
@@ -54,7 +54,7 @@ class NPRNewsSpider(BaseSpider):
                 news_item['raw_content'] = content
                 news_item['publication_date'] = self.get_publication_date(response)
                 news_item['url'] = response.url
-                news_item['source'] = 'Fox News'
+                news_item['source'] = 'Politico'
                 news_item['created_at'] = datetime.utcnow().isoformat()
 
                 # Save to MongoDB database
