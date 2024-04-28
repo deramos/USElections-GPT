@@ -9,8 +9,8 @@ from scraper.items import NewsItem
 from dbservices.mongoservice import MongoService
 
 
-class PoliticoNewsSpider(BaseSpider):
-    name = 'PoliticoNewsSpider'
+class PoliticoSpider(BaseSpider):
+    name = 'PoliticoSpider'
     base_url = 'https://www.politico.com/'
     db_collection_name = 'raw-news'
     redis_key = f'politico-visited'

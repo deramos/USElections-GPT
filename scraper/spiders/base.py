@@ -14,6 +14,7 @@ class SpidersEnum(enum.Enum):
     FoxNewsSpider = 'foxnews'
     CNNSpider = 'cnn'
     NPRNewsSpider = 'npr'
+    PoliticoSpider = 'politico'
 
     def __str__(self):
         return self.name
