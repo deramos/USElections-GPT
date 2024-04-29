@@ -3,6 +3,7 @@ import logging
 from config import config
 from fastapi import APIRouter, Request
 from fastapi.responses import JSONResponse
+from daos.newsletter import NewsLetterObject
 from dbservices.mongoservice import MongoService
 
 logging.basicConfig(level=logging.INFO)
@@ -15,17 +16,25 @@ router = APIRouter(
 
 
 @router.post('/subscribe')
-async def subscribe(request: Request):
+async def subscribe(data: NewsLetterObject):
     """
     Subscribes a user to daily newsletter with text to speech (TTS) enabled. The TTS is developed using Seamless
     https://ai.meta.com/research/seamless-communication/
     :return: HTTPStatus_CREATED
     """
-    data = await request.json()
+    try:
+        insert_successful = MongoService.insert_data('newsletter-subscribers', data=[dict(data)])
 
-    # TODO: Create NewsLetter Object using the parsed JSON. Save the Newsletter object into Mongo using MongoService
+        if insert_successful:
+            return JSONResponse(
+                content={},
+                status_code=http.HTTPStatus.CREATED
+            )
+    except Exception as e:
+        logger.error(f'Error subscribing to newsletter {e}')
+        return JSONResponse(
+            content={'status': 'fail',
+                     'message': 'Error subscribing to newsletter'},
+            status_code=http.HTTPStatus.INTERNAL_SERVER_ERROR
+        )
 
-    return JSONResponse(
-        content={},
-        status_code=http.HTTPStatus.CREATED
-    )
