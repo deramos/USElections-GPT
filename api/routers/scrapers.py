@@ -3,8 +3,6 @@
 # stopped, and deleted. We can also check the status of running spider
 # jobs.
 
-__author__ = 'Chidera'
-
 import logging
 from config import config
 from fastapi import APIRouter

@@ -21,7 +21,7 @@ class MongoService:
         """
         if cls.client is None:
             cls.client = MongoClient(config.MONGO_URL)
-            cls.mongo_db = cls.client.get_database(config.MONGO_DB_NAME)
+            cls.mongo_db = cls.client.get_database(config.COLLECTION_NAME)
         return cls.client, cls.mongo_db
 
     @classmethod
