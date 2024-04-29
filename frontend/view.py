@@ -26,14 +26,15 @@ async def main():
     with st.sidebar:
         st.image("docs/img/background_image.png", caption='Image Source: AI Generated')
         # st.write('Image Source: AI Generated', caption='')
-        st.write("🇺🇸 RAG based LLM with knowledge of the upcoming November 2024 US electoral process. \n\n"
-                 "**Still a work-in-progress**")
-
-        st.write('**Subscribe to **Daily News Letter** developed using carefully engineered prompts**')
-        email = st.text_input(label='email')
-        affiliation = st.radio('Political Affiliation',
-                               options=['All', 'Neutral', 'Left Wing', 'Right Wing'],
-                               captions=['CNN, Politico, Fox News, NPP', 'CNN, Politico', 'NPR', 'Fox News'])
+        st.write("🇺🇸 RAG based LLM with knowledge of the upcoming November 2024 US electoral process. \n"
+                 "***Still a work-in-progress***")
+        st.write('-------------')
+        st.write('**Subscribe to Daily News Letter.** *Developed using carefully engineered prompts with **text-to-'
+                 'speech** enabled*')
+        email = st.text_input(label='**Email Address:**', placeholder='user@email.com')
+        affiliation = st.radio('**Political Affiliation**',
+                               options=['All', 'Neutral', 'Right Wing', 'Left Wing'],
+                               captions=['CNN, Politico, Fox News, NPR', 'CNN, Politico', 'Fox News', 'NPR'])
         st.button('Subscribe')
 
     st.title("🗳️ US Elections GPT")
