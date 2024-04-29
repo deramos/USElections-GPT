@@ -1,14 +1,18 @@
 import uuid
 import asyncio
+import requests
 import streamlit as st
 from websockets import client as ws_client
 
 session_id = uuid.uuid4()
 
+WEBSOCKET_URL = 'ws://localhost:9000'
+SUBSCRIBE_URL = 'http://localhost:9000/news-letter/subscribe'
+
 
 async def websocket_handler():
     if prompt := st.chat_input():
-        async with ws_client.connect(f'ws://localhost:9000/websocket/{session_id}') as websocket:
+        async with ws_client.connect(f'{WEBSOCKET_URL}/websocket/{session_id}') as websocket:
             # collect user message and write to chat interface
             st.session_state.messages.append({"role": "user", "content": prompt})
             st.chat_message("user").write(prompt)
@@ -20,6 +24,11 @@ async def websocket_handler():
             # append reply to the session_state message and write to chat interface
             st.session_state.messages.append({"role": "assistant", "content": reply})
             st.chat_message("assistant").write(reply)
+
+
+async def subscribe_func(email: str, political_affiliation: str) -> int:
+    response = requests.post(SUBSCRIBE_URL, json={'email': email, 'affiliation': political_affiliation})
+    return response.status_code  # 201_created
 
 
 async def main():
@@ -35,7 +44,7 @@ async def main():
         affiliation = st.radio('**Political Affiliation**',
                                options=['All', 'Neutral', 'Right Wing', 'Left Wing'],
                                captions=['CNN, Politico, Fox News, NPR', 'CNN, Politico', 'Fox News', 'NPR'])
-        st.button('Subscribe')
+        st.button('Subscribe', on_click=asyncio.create_task(subscribe_func(email, affiliation)))
 
     st.title("🗳️ US Elections GPT")
     st.write("I am a political analyst with advanced knowledge of the United States electoral process. I can answer "
