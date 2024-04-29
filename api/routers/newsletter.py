@@ -19,7 +19,7 @@ async def subscribe(request: Request):
     """
     Subscribes a user to daily newsletter with text to speech (TTS) enabled. The TTS is developed using Seamless
     https://ai.meta.com/research/seamless-communication/
-    :return: CREATED
+    :return: HTTPStatus_CREATED
     """
     data = await request.json()
 
