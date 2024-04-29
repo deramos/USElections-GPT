@@ -2,7 +2,7 @@
 # scrapyd-api library. With these endpoints, spiders can be started,
 # stopped, and deleted. We can also check the status of running spider
 # jobs.
-
+import http
 import logging
 from config import config
 from fastapi import APIRouter
@@ -37,7 +37,7 @@ def list_spiders():
             {'name': spider,
              'running': True if any(job['spider'] == spider for job in jobs['running']) else False
              } for spider in spiders]},
-        status_code=200
+        status_code=http.HTTPStatus.OK
     )
 
 
@@ -58,7 +58,7 @@ async def start_scraper(scraper_name: SpidersEnum):
             # check if spider is running
             if any(job['spider'] == spider_name for job in jobs['running']):
                 return JSONResponse(content={"message": f"Scraper '{scraper_name}' is already running"},
-                                    status_code=400)
+                                    status_code=http.HTTPStatus.BAD_REQUEST)
 
             # start crawling
             job_id = scrapy_client.schedule(config.SCRAPYD_PROJECT_NAME, scraper_name)
@@ -66,13 +66,15 @@ async def start_scraper(scraper_name: SpidersEnum):
 
             return JSONResponse(content={"message": f"Scraper '{scraper_name}' started successfully",
                                          "job_id": job_id},
-                                status_code=200)
+                                status_code=http.HTTPStatus.OK)
         except Exception as e:
             logger.error(f"Error starting Scraper '{scraper_name}': {e}")
-            return JSONResponse(content={"message": f"Error starting Scraper '{scraper_name}'"}, status_code=500)
+            return JSONResponse(content={"message": f"Error starting Scraper '{scraper_name}'"},
+                                status_code=http.HTTPStatus.INTERNAL_SERVER_ERROR)
 
     else:
-        return JSONResponse(content={"message": f"Scraper '{scraper_name}' not found"}, status_code=400)
+        return JSONResponse(content={"message": f"Scraper '{scraper_name}' not found"},
+                            status_code=http.HTTPStatus.BAD_REQUEST)
 
 
 @router.get("/{scraper_name}/stop")
@@ -93,14 +95,16 @@ async def stop_spider(scraper_name: SpidersEnum):
                 try:
                     scrapy_client.cancel(config.SCRAPYD_PROJECT_NAME, job['id'])
                     return JSONResponse(content={"message": f"Scraper '{spider_name}' stopped successfully"},
-                                        status_code=200)
+                                        status_code=http.HTTPStatus.OK)
                 except Exception as e:
                     logger.error(f"Error starting Scraper '{spider_name}': {e}")
                     return JSONResponse(content={"message": f"Error starting Scraper '{spider_name}'"},
-                                        status_code=500)
-        return JSONResponse(content={"message": f"Scraper '{scraper_name}' not running"}, status_code=400)
+                                        status_code=http.HTTPStatus.INTERNAL_SERVER_ERROR)
+        return JSONResponse(content={"message": f"Scraper '{scraper_name}' not running"},
+                            status_code=http.HTTPStatus.BAD_REQUEST)
     else:
-        return JSONResponse(content={"message": f"Scraper '{scraper_name}' not found"}, status_code=400)
+        return JSONResponse(content={"message": f"Scraper '{scraper_name}' not found"},
+                            status_code=http.HTTPStatus.BAD_REQUEST)
 
 
 @router.get('/{scraper_name}/status')
@@ -126,9 +130,10 @@ async def check_scraper_status(scraper_name: SpidersEnum):
                     break
             if break_outer:
                 break
-        return JSONResponse(content=result, status_code=200)
+        return JSONResponse(content=result, status_code=http.HTTPStatus.OK)
     else:
-        return JSONResponse(content={"message": f"Scraper '{scraper_name}' not found"}, status_code=400)
+        return JSONResponse(content={"message": f"Scraper '{scraper_name}' not found"},
+                            status_code=http.HTTPStatus.BAD_REQUEST)
 
 
 @router.on_event("shutdown")
