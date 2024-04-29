@@ -29,6 +29,13 @@ async def main():
         st.write("🇺🇸 RAG based LLM with knowledge of the upcoming November 2024 US electoral process. \n\n"
                  "**Still a work-in-progress**")
 
+        st.write('**Subscribe to **Daily News Letter** developed using carefully engineered prompts**')
+        email = st.text_input(label='email')
+        affiliation = st.radio('Political Affiliation',
+                               options=['All', 'Neutral', 'Left Wing', 'Right Wing'],
+                               captions=['CNN, Politico, Fox News, NPP', 'CNN, Politico', 'NPR', 'Fox News'])
+        st.button('Subscribe')
+
     st.title("🗳️ US Elections GPT")
     st.write("I am a political analyst with advanced knowledge of the United States electoral process. I can answer "
              "any question about the upcoming November 2024 US General Elections. I stay up to date by "
