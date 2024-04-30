@@ -54,6 +54,8 @@ async def main():
                 )
                 if response.status_code == http.HTTPStatus.CREATED:
                     st.success('Successfully Subscribed')
+                else:
+                    st.error(response.json())
 
     st.title("🗳️ US Elections GPT")
     st.write("I am a political analyst with advanced knowledge of the United States electoral process. I can answer "
