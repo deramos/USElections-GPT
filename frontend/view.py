@@ -1,4 +1,5 @@
 import uuid
+import http
 import asyncio
 import requests
 import streamlit as st
@@ -26,11 +27,6 @@ async def websocket_handler():
             st.chat_message("assistant").write(reply)
 
 
-async def subscribe_func(email: str, political_affiliation: str) -> int:
-    response = requests.post(SUBSCRIBE_URL, json={'email': email, 'affiliation': political_affiliation})
-    return response.status_code  # 201_created
-
-
 async def main():
     with st.sidebar:
         st.image("docs/img/background_image.png", caption='Image Source: AI Generated')
@@ -40,11 +36,24 @@ async def main():
         st.write('-------------')
         st.write('**Subscribe to Daily News Letter.** *Developed using carefully engineered prompts with **text-to-'
                  'speech** enabled*')
-        email = st.text_input(label='**Email Address:**', placeholder='user@email.com')
+        name = st.text_input(label='**Name:**', placeholder='John Doe', key='name')
+        email = st.text_input(label='**Email Address:**', placeholder='user@email.com', key='email')
         affiliation = st.radio('**Political Affiliation**',
                                options=['All', 'Neutral', 'Right Wing', 'Left Wing'],
                                captions=['CNN, Politico, Fox News, NPR', 'CNN, Politico', 'Fox News', 'NPR'])
-        st.button('Subscribe', on_click=asyncio.create_task(subscribe_func(email, affiliation)))
+
+        if st.button('Subscribe'):
+            if not name:
+                st.error('Please enter your name')
+            elif not email:
+                st.error("Please enter a valid email")
+            else:
+                response = requests.post(
+                    SUBSCRIBE_URL,
+                    json={'name': name, 'email': email, 'affiliation': affiliation}
+                )
+                if response.status_code == http.HTTPStatus.CREATED:
+                    st.success('Successfully Subscribed')
 
     st.title("🗳️ US Elections GPT")
     st.write("I am a political analyst with advanced knowledge of the United States electoral process. I can answer "
