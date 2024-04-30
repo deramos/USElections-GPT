@@ -13,7 +13,7 @@ SUBSCRIBE_URL = 'http://localhost:9000/news-letter/subscribe'
 
 async def websocket_handler():
     if prompt := st.chat_input():
-        async with ws_client.connect(f'{WEBSOCKET_URL}/websocket/{session_id}') as websocket:
+        async with ws_client.connect(f'{WEBSOCKET_URL}/chat/{session_id}') as websocket:
             # collect user message and write to chat interface
             st.session_state.messages.append({"role": "user", "content": prompt})
             st.chat_message("user").write(prompt)

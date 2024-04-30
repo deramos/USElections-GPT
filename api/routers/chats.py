@@ -19,7 +19,7 @@ rag_llm: RunnableWithMessageHistory
 @router.on_event('startup')
 def init_llm():
     """
-    Init Mistral LLM Chatbot
+    Init LLM Chatbot
     :return:
     """
     llm_util = chat_util.LLMUtil()
@@ -27,7 +27,7 @@ def init_llm():
     rag_llm = llm_util.init_llm()
 
 
-@router.websocket('/websocket/{session_id}')
+@router.websocket('/{session_id}')
 async def chat(websocket: WebSocket, session_id: str):
     await websocket.accept()
 
