@@ -2,9 +2,7 @@ import enum
 import scrapy
 import logging
 from typing import Any
-from config import config
 from scrapy.http import Response
-from confluent_kafka import Producer
 from dbservices.redisservice import RedisService
 
 logging.basicConfig(level=logging.INFO)

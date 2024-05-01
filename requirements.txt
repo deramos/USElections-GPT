@@ -18,6 +18,7 @@ itemadapter~=0.8.0
 langchain~=0.1.16
 streamlit~=1.33.0
 torch~=2.2.2
+apache-airflow~=2.8.4
 apache-airflow-providers-papermill~=3.6.2
 transformers~=4.39.3
 pendulum~=3.0.0

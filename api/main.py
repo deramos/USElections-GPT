@@ -1,4 +1,3 @@
-import uvicorn
 from fastapi import FastAPI
 from api.routers import scrapers, chats
 
@@ -15,4 +14,3 @@ def home():
 @app.get('/health', tags=['home'])
 def health():
     return {"name": "US Elections API", 'status': 'running'}
-
