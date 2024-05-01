@@ -67,6 +67,17 @@ services:
     networks:
       - app-network
 
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8501:8501"
+    command: >
+      sh -c "streamlit run frontend/view.py"
+    networks:
+      - app-network
+
   redis:
     image: redis:latest
     container_name: redis
