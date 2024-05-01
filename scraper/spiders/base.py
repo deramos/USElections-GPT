@@ -27,6 +27,7 @@ class BaseSpider(scrapy.Spider):
     politics_url_pattern = ''
     logger = logging.getLogger(__name__)
     redis_client = RedisService.get_client()
+    # producer = Producer({'bootstrap.servers': config.KAFKA_BROKER})
 
     def is_url_visited(self, url):
         """
