@@ -1,7 +1,5 @@
 import logging
-from typing import Union
 from util import chat_util
-from fastapi import Request
 from fastapi import APIRouter, WebSocket
 from langchain_core.runnables.history import RunnableWithMessageHistory
 
