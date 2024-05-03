@@ -70,7 +70,7 @@ services:
   frontend:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: frontend/Dockerfile
     ports:
       - "8501:8501"
     command: >
@@ -143,6 +143,7 @@ services:
       - .env
 
   # -------------------- Airflow Services -------------------- #
+  # ----NOT THE BEST APPROACH. EXTEND AIRFLOW IMAGE INSTEAD----#
 
 #  postgres:
 #    image: postgres:13
