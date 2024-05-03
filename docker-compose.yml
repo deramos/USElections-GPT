@@ -2,7 +2,9 @@ version: '3.8'
 
 x-airflow-common:
   &airflow-common
-  image: apache/airflow:2.8.4
+  build:
+    context: airflow
+    dockerfile: airflow/Dockerfile
   env_file:
     - .env
   volumes:
