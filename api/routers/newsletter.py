@@ -1,7 +1,6 @@
 import http
 import logging
-from config import config
-from fastapi import APIRouter, Request
+from fastapi import APIRouter
 from fastapi.responses import JSONResponse
 from daos.newsletter import NewsLetterObject
 from dbservices.mongoservice import MongoService
