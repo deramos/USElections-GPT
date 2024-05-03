@@ -1,5 +1,5 @@
 import logging
-from util import chat_util
+from util.chat_util import LLMUtil
 from fastapi import APIRouter, WebSocket
 from langchain_core.runnables.history import RunnableWithMessageHistory
 
@@ -20,9 +20,8 @@ def init_llm():
     Init LLM Chatbot
     :return:
     """
-    llm_util = chat_util.LLMUtil()
     global rag_llm
-    rag_llm = llm_util.init_llm()
+    rag_llm = LLMUtil.init_llm()
 
 
 @router.websocket('/{session_id}')
