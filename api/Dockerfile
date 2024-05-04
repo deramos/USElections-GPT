@@ -1,4 +1,4 @@
-FROM pytorch:2.2.2-cuda12.1-cudnn8-runtime
+FROM pytorch/pytorch
 
 ENV PYTHONBUFFERED=1
 
