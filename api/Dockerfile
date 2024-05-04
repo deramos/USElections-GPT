@@ -3,7 +3,7 @@ FROM pytorch:2.2.2-cuda12.1-cudnn8-runtime
 ENV PYTHONBUFFERED=1
 
 WORKDIR /app
-COPY requirements.txt requirements.txt
+COPY api/requirements.txt requirements.txt
 
 # Cleanup apt cache to reduce image size
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*

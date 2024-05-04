@@ -2,7 +2,7 @@ FROM apache/airflow:2.9.0
 
 USER root
 
-COPY requirements.txt requirements.txt
+COPY airflow/requirements.txt requirements.txt
 
 RUN apt-get update \
   && apt-get install -y --no-install-recommends \

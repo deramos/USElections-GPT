@@ -3,7 +3,7 @@ FROM python:3.9-slim-buster
 ENV PYTHONBUFFERED=1
 
 WORKDIR /app
-COPY requirements.txt requirements.txt
+COPY frontend/requirements.txt requirements.txt
 
 # update image and install supervisord
 RUN apt-get update && apt-get install -y supervisor && \

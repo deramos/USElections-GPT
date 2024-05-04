@@ -3,7 +3,7 @@ FROM python:3.9-slim-buster
 ENV PYTHONBUFFERED=1
 
 WORKDIR /app
-COPY requirements.txt requirements.txt
+COPY scraper/requirements.txt requirements.txt
 
 # Cleanup apt cache to reduce image size
 RUN apt-get update && \
