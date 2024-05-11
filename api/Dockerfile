@@ -13,6 +13,8 @@ RUN apt-get update && \
     pip3 install --upgrade pip &&  \
     pip install -r requirements.txt --use-deprecated=legacy-resolver
 
+COPY . /app
+
 # expose project ports
 EXPOSE 9000
 
