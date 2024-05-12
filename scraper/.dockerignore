@@ -1,0 +1,10 @@
+.ipynb_checkpoints/
+airflow/
+api/
+config/
+daos/
+dbservices/
+frontend/
+notebooks/
+util/
+venv/
