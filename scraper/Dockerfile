@@ -13,11 +13,13 @@ RUN apt-get update && \
 RUN pip3 install --upgrade pip &&  \
     pip install -r requirements.txt --use-deprecated=legacy-resolver
 
-COPY . /app/scraper
-COPY ../logparser_settings.py /app
-COPY ../scrapy.cfg /app
-COPY ../scrapyd.conf /app
-COPY ../scrapydweb_settings_v10.py /app
+# COPY  folders into docker image (will find cleaner alternative)
+COPY ./scraper /app
+COPY ./logparser_settings.py /app
+COPY ./scrapy.cfg /app
+COPY ./scrapyd.conf /app
+COPY ./scrapydweb_settings_v10.py /app
+COPY ./.env /app
 
 # Copy and replace Scrapyd logparser settings
 RUN mkdir -p /var/scrapyd/logs && \
