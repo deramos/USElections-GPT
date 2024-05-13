@@ -14,13 +14,13 @@ RUN apt-get update && \
     pip install -r requirements.txt --use-deprecated=legacy-resolver
 
 # COPY  folders into docker image (rather crude, but eh!)
-COPY ./api /app
-COPY ./config /app
-COPY ./daos /app
-COPY ./dbservices /app
-COPY ./scraper /app
-COPY ./util /app
-COPY ./.env /app
+COPY api /app
+COPY config /app
+COPY daos /app
+COPY dbservices /app
+COPY scraper /app
+COPY util /app
+COPY .env /app
 
 # expose project ports
 EXPOSE 9000

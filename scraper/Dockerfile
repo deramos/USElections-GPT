@@ -3,7 +3,7 @@ FROM python:3.9-slim-buster
 ENV PYTHONBUFFERED=1
 
 WORKDIR /app
-COPY requirements.txt requirements.txt
+COPY scraper/requirements.txt requirements.txt
 
 # Cleanup apt cache to reduce image size
 RUN apt-get update && \
@@ -14,12 +14,12 @@ RUN pip3 install --upgrade pip &&  \
     pip install -r requirements.txt --use-deprecated=legacy-resolver
 
 # COPY  folders into docker image (will find cleaner alternative)
-COPY ./scraper /app
-COPY ./logparser_settings.py /app
-COPY ./scrapy.cfg /app
-COPY ./scrapyd.conf /app
-COPY ./scrapydweb_settings_v10.py /app
-COPY ./.env /app
+COPY scraper /app
+COPY logparser_settings.py /app
+COPY scrapy.cfg /app
+COPY scrapyd.conf /app
+COPY scrapydweb_settings_v10.py /app
+COPY .env /app
 
 # Copy and replace Scrapyd logparser settings
 RUN mkdir -p /var/scrapyd/logs && \
