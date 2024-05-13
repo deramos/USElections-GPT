@@ -13,8 +13,14 @@ RUN apt-get update && \
     pip3 install --upgrade pip &&  \
     pip install -r requirements.txt --use-deprecated=legacy-resolver
 
-# COPY  folders into docker image (excluding those in dockerignore?)
-COPY . /app
+# COPY  folders into docker image (rather crude, but eh!)
+COPY ./api /app
+COPY ./config /app
+COPY ./daos /app
+COPY ./dbservices /app
+COPY ./scraper /app
+COPY ./util /app
+COPY ./.env /app
 
 # expose project ports
 EXPOSE 9000
