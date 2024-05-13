@@ -4,7 +4,6 @@ config/
 daos/
 dbservices/
 frontend/
-notebooks/
 scraper/
 util/
 venv/

@@ -46,8 +46,8 @@ services:
 
   scrapyd:
     build:
-      context: .
-      dockerfile: scraper/Dockerfile
+      context: ./scraper
+      dockerfile: Dockerfile
     ports:
       - "6800:6800"
     command: >
@@ -57,8 +57,8 @@ services:
 
   scrapyd-web:
     build:
-      context: .
-      dockerfile: scraper/Dockerfile
+      context: ./scaper
+      dockerfile: Dockerfile
     depends_on:
       scrapyd:
         condition: service_started
