@@ -16,3 +16,7 @@ RUN pip3 install --upgrade pip &&  \
     pip install -r requirements.txt --use-deprecated=legacy-resolver
 
 USER airflow
+
+# COPY dags and notebooks
+COPY airflow/ /opt/airflow
+COPY notebooks /opt/airflow
