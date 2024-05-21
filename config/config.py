@@ -16,8 +16,7 @@ KAFKA_TOPIC = os.getenv('KAFKA_TOPIC')
 
 # MongoDB Config
 MONGO_URL = os.getenv('MONGO_CONNECTION_STRING')
-#TODO change to DB_NAME
-COLLECTION_NAME = os.getenv('COLLECTION_NAME')
+DB_NAME = os.getenv('DB_NAME')
 
 # Model Name
 MODEL_NAME = os.getenv('MODEL_NAME')

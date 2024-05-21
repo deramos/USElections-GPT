@@ -19,7 +19,7 @@ class LLMUtil:
     model_name = config.MODEL_NAME
     vector_store = Chroma(client=HttpClient(),
                           embedding_function=HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2"),
-                          collection_name=config.COLLECTION_NAME)
+                          collection_name=config.DB_NAME)
     chat_history_prompt = """
         Given a chat history and the latest user question which might reference context in the chat history, 
         formulate a standalone question which can be understood without the chat history. Do NOT answer 
