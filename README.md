@@ -15,23 +15,23 @@ A simplified architecture diagram of the product is shown below:
 
 ## SERVICES
 
-#### <u>SCRAPER SERVICE & MONGODB</u>
+#### <ins>SCRAPER SERVICE & MONGODB</ins>
 First, news articles are scraped from news sources and loaded into MongoDB. To ensure that all sides of the political 
 spectrum are represented in the LLM, both right-wing and left-wing news sources, as well as those in the middle ground, 
 are scraped. Users can select which side of the political spectrum they prefer when querying the LLM..
 
 
-#### <u>AIRFLOW, NEWS SUMMARY, & NAMED ENTITY EXTRACTION</u>
+#### <ins>AIRFLOW, NEWS SUMMARY, & NAMED ENTITY EXTRACTION</ins>
 Airflow is used with Papermill and Jupyter Notebook to summarize news articles using HuggingFace summarization pipeline,
 extract named entities using spaCy, and obtain vector embeddings using HuggingFace SentenceTransformer. The news articles,
 their summaries, and extracted entities including *_PERSON_*, *_ORG_*, and *_LOCATION_* are loaded into ChromaDB datastore.
 
 
-#### <u>REDIS CACHE</u>
+#### <ins>REDIS CACHE</ins>
 The news article URLs are cached in Redis to ensure that each webpage is visited and scraped only once 
 
 
-#### <u>CHAT SERVICE & LANGCHAIN</u>
+#### <ins>CHAT SERVICE & LANGCHAIN</ins>
 The chat service is created using LangChain and HuggingFace pipeline. First, a  Mistral 7B model (which may be 
 substituted with a different model in the future) is fine-tuned into a 4-bit float model using *_bitsandbytes_*. This is 
 done to reduce model footprint and speed up inference. 
@@ -39,7 +39,7 @@ LangChain is used to create a RAG-based model using the quantized model and Chro
 embeddings are stored. Redis is used to store chat sessions so that sessions can be revisited with ease.
 
 
-#### <u>FASTAPI & WEBSOCKET</u>
+#### <ins>FASTAPI & WEBSOCKET</ins>
 A WebSocket server is created using FastAPI to serve the langchain model. 
 
 
