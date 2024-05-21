@@ -2,13 +2,11 @@
 # sentence-piece vectors to be saved in chromadb
 import requests
 import pendulum
-from pathlib import Path
 from http import HTTPStatus
 
 from airflow import DAG
 from airflow.operators.empty import EmptyOperator
 from airflow.operators.python import PythonOperator
-from airflow.operators.python import get_current_context
 
 SCRAPERS = ["FoxNewsSpider", "CNNSpider", "NPRNewsSpider", "PoliticoSpider"]
 URL = 'http://localhost:9000/scrapers'
@@ -18,7 +16,8 @@ def schedule_scrapers():
     for spider in SCRAPERS:
         # check if spider is running
         spider_status = requests.get(f'{URL}/{spider}/status').json()
-        # if spider is running, continue
+
+        # if spider is running, continue to the next spider
         if 'status' in spider_status and spider_status['status'] is True:
             continue
         # else start it
