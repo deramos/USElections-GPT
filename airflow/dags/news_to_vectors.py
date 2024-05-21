@@ -35,7 +35,7 @@ def execute_notebook():
 with DAG(
         dag_id="news-summary",
         description='Summarize news articles and extract named entities for use in RAG',
-        start_date=pendulum.datetime(2024, 4, 28),
+        start_date=pendulum.datetime(2024, 5, 28),
         catchup=True,
         schedule_interval='@daily'
 ) as dag:

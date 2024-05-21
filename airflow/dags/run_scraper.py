@@ -31,7 +31,7 @@ def schedule_scrapers():
 with DAG(
         dag_id="run-spider",
         description='Schedule and start daily spiders',
-        start_date=pendulum.datetime(2024, 4, 28),
+        start_date=pendulum.datetime(2024, 5, 28),
         catchup=True,
         schedule_interval='@daily'
 ) as dag:
