@@ -50,4 +50,4 @@ with DAG(
 
     end = EmptyOperator(task_id='end')
 
-    start >> execute_notebook  >> end
+    start >> execute_notebook >> end
