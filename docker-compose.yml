@@ -6,7 +6,7 @@ x-airflow-common:
     context: airflow
     dockerfile: airflow/Dockerfile
   env_file:
-    - .env
+    - ./airflow/.env
   volumes:
     - ./airflow/dags:/opt/airflow/dags
     - ./airflow/logs:/opt/airflow/logs
