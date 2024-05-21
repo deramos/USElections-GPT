@@ -26,8 +26,8 @@ def execute_notebook():
     import papermill as pm
 
     pm.execute_notebook(
-        input_path=Path.joinpath(Path(__file__).parents[2], "notebooks/News Summary.ipynb"),
-        output_path=Path.joinpath(Path(__file__).parents[2], "notebooks/News-Summary-Executed.ipynb"),
+        input_path=Path.joinpath(Path(__file__).parents[1], "notebooks/News Summary.ipynb"),
+        output_path=Path.joinpath(Path(__file__).parents[1], "notebooks/News-Summary-Executed.ipynb"),
         parameters={"batch_date": {'$gte': start_date_str, '$lte': end_date_str}}
     )
 
