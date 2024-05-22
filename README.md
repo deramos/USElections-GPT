@@ -24,7 +24,7 @@ are scraped. Users can select which side of the political spectrum they prefer w
 #### <ins>AIRFLOW, NEWS SUMMARY, & NAMED ENTITY EXTRACTION</ins>
 Airflow is used with Papermill and Jupyter Notebook to summarize news articles using HuggingFace summarization pipeline,
 extract named entities using spaCy, and obtain vector embeddings using HuggingFace SentenceTransformer. The news articles,
-their summaries, and extracted entities including *_PERSON_*, *_ORG_*, and *_LOCATION_* are loaded into ChromaDB datastore.
+their summaries, and extracted entities including **_PERSON_**, **_ORG_**, and **_LOCATION_** are loaded into ChromaDB datastore.
 
 
 #### <ins>REDIS CACHE</ins>
@@ -33,7 +33,7 @@ The news article URLs are cached in Redis to ensure that each webpage is visited
 
 #### <ins>CHAT SERVICE & LANGCHAIN</ins>
 The chat service is created using LangChain and HuggingFace pipeline. First, a  Mistral 7B model (which may be 
-substituted with a different model in the future) is fine-tuned into a 4-bit float model using *_bitsandbytes_*. This is 
+substituted with a different model in the future) is fine-tuned into a 4-bit float model using **_bitsandbytes_**. This is 
 done to reduce model footprint and speed up inference. 
 LangChain is used to create a RAG-based model using the quantized model and ChromaDB, where the news article vector 
 embeddings are stored. Redis is used to store chat sessions so that sessions can be revisited with ease.
