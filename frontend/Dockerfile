@@ -17,6 +17,7 @@ RUN pip3 install --upgrade pip &&  \
     pip install -r requirements.txt --use-deprecated=legacy-resolver
 
 COPY frontend /app/frontend
+COPY docs /app/docs
 
 # expose project ports
 EXPOSE 8501
