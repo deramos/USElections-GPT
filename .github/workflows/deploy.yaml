@@ -1,0 +1,47 @@
+name: Build and Push Docker Images to ECR
+
+on:
+  push:
+    branches:
+      - prodv1
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+#      - name: Log in to Amazon ECR
+#        env:
+#          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#          AWS_REGION: ${{ secrets.AWS_REGION }}
+#        run: |
+#          aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $(aws sts get-caller-identity --query Account --output text).dkr.ecr.$AWS_REGION.amazonaws.com
+#
+#      - name: Build and push images
+#        env:
+#          AWS_REGION: ${{ secrets.AWS_REGION }}
+#          ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
+#        run: |
+#          # Get the AWS account ID
+#          ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+#          ECR_REGISTRY="$ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com"
+#
+#          # Build the images using Docker Compose
+#          docker-compose -f docker-compose.yml build
+#
+#          # Push each image to ECR
+#          for service in $(docker-compose config --services); do
+#            IMAGE_NAME="$ECR_REGISTRY/$ECR_REPOSITORY-$service"
+#            TAG=$(git rev-parse --short HEAD)
+#
+#            # Tag and push the image
+#            docker tag "$service:latest" "$IMAGE_NAME:$TAG"
+#            docker push "$IMAGE_NAME:$TAG"
+#          done
