@@ -19,4 +19,4 @@ USER airflow
 
 # COPY dags and notebooks
 COPY airflow/ /opt/airflow
-COPY notebooks /opt/airflow
+COPY notebooks /opt/airflow/notebooks
