@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - prodv1
+  pull_request:
+    branches:
+      - prodv1
 
 jobs:
   build-and-push:
