@@ -1,46 +1,33 @@
-import os
 import boto3
-from dotenv import load_dotenv
 
 
 def create_secrets():
 
-    # Load .env file
-    load_dotenv('.env')
+    # Read .env file and extract desired variables
+    env_vars = {}
+    with open('../.env.prod', 'r') as file:
+        for line in file:
+            if not line.startswith('#') and '=' in line:
+                key, value = line.strip().split('=', 1)
+                env_vars[key.strip()] = value.strip()
 
-    # Initialize Boto3 client for AWS Secrets Manager
-    client = boto3.client('secretsmanager')
+    # Remove any system-specific variables
+    for key in list(env_vars.keys()):
+        if key.startswith('SYSTEM_'):
+            del env_vars[key]
 
-    # AWS region where the secrets will be stored
-    aws_region = os.getenv('AWS_REGION')
+    # Create or update AWS Secrets Manager secrets
+    secret_name = "us-election-gpt-secrets"
+    region_name = "us-east-1"
+    client = boto3.client('secretsmanager', region_name=region_name)
 
-    # Iterate over environment variables and create secrets
-    for key, value in os.environ.items():
-        if key.startswith('AWS_'):  # Skip AWS specific environment variables
-            continue
+    response = client.create_secret(
+        Name=secret_name,
+        SecretString=str(env_vars)
+    )
 
-        secret_name = f"{key}"
-        secret_value = value
+    print(f"Secret created successfully! with response {response}")
 
-        try:
-            response = client.create_secret(
-                Name=secret_name,
-                SecretString=secret_value,
-                Description=f"Secret for {key}",
-                Tags=[
-                    {
-                        'Key': 'Environment',
-                        'Value': 'Production'
-                    },
-                ]
-            )
-            print(f"Secret {secret_name} created successfully.")
-        except client.exceptions.ResourceExistsException:
-            # If the secret already exists, update it
-            response = client.update_secret(
-                SecretId=secret_name,
-                SecretString=secret_value
-            )
-            print(f"Secret {secret_name} updated successfully.")
-        except Exception as e:
-            print(f"Error creating/updating secret {secret_name}: {str(e)}")
+
+if __name__ == "__main__":
+    create_secrets()
