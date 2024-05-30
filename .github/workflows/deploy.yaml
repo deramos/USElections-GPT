@@ -52,7 +52,7 @@ jobs:
           ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
           ECR_REGISTRY="$ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com"
 
-          docker-compose --env-file .env -f docker-compose.yml build
+          docker-compose --env-file .env -f docker-compose.prod.yml build
 
           for service in $(docker-compose config --services); do
             IMAGE_NAME="$ECR_REGISTRY/$ECR_REPOSITORY"
