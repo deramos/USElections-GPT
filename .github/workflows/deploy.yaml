@@ -56,4 +56,4 @@ jobs:
             IMAGE_NAME="$ECR_REGISTRY/$ECR_REPOSITORY"
 
             docker tag "$service:latest" "$IMAGE_NAME:$service"
-            docker push "$IMAGE_NAME:$TAG"
+            docker push "$IMAGE_NAME:$service"
