@@ -1,0 +1,66 @@
+version: '3.8'
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: api/Dockerfile
+    ports:
+      - "9000:9000"
+    command: [ "uvicorn", "api.main:app", "--host", "0.0.0.0", "--port", "9000" , "--workers", "2", "--reload"]
+    volumes:
+      - ./:/app
+      - api_data:/var/api-data
+    depends_on:
+      - scrapyd
+      - redis
+      - vectordb
+      - mongo
+    env_file:
+      - .env
+
+  scrapyd:
+    build:
+      context: .
+      dockerfile: scraper/Dockerfile
+    ports:
+      - "6800:6800"
+    command: >
+      sh -c "scrapyd & logparser"
+
+  scrapyd-web:
+    build:
+      context: .
+      dockerfile: scraper/Dockerfile
+    depends_on:
+      scrapyd:
+        condition: service_started
+    ports:
+      - "5000:5000"
+    command: >
+      sh -c "scrapyd-deploy & scrapydweb"
+
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    ports:
+      - "8501:8501"
+    command: >
+      sh -c "streamlit run frontend/view.py"
+
+  vectordb:
+    image: chromadb/chroma:0.4.25.dev93
+    restart: always
+    ports:
+      - "8000:8000"
+    volumes:
+      - vectordb:/var/chromadb
+
+networks:
+  app-network:
+    driver:  bridge
+
+volumes:
+  api_data:
+  vectordb:
