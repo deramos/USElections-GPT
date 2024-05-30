@@ -13,9 +13,7 @@ services:
       - api_data:/var/api-data
     depends_on:
       - scrapyd
-      - redis
       - vectordb
-      - mongo
     env_file:
       - .env
 
@@ -32,9 +30,6 @@ services:
     build:
       context: .
       dockerfile: scraper/Dockerfile
-    depends_on:
-      scrapyd:
-        condition: service_started
     ports:
       - "5000:5000"
     command: >
