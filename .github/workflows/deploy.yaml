@@ -35,11 +35,10 @@ jobs:
           AWS_REGION: ${{ secrets.AWS_REGION }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          SECRET_NAME: ${{ secrets.SECRET_NAME }}
         run: |
-          secrets=$(aws secretsmanager get-secret-value --region $AWS_REGION --secret-id us-election-gpt-secrets | jq -r '.SecretString')
-          echo "$secrets" > secrets.json
-
-          jq -r 'to_entries|map("echo \(.key)=\(.value|tostring) >> $GITHUB_ENV")|.[]' secrets.json | bash
+          secret_string=$(aws secretsmanager get-secret-value --region $AWS_REGION --secret-id $SECRET_NAME --query SecretString --output text)
+          echo $secret_string | jq -r 'to_entries | .[] | "\(.key)=\(.value)"' > .env
 
       - name: Build and push images
         env:

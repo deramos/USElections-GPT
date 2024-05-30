@@ -1,5 +1,5 @@
 import boto3
-
+import json
 
 def create_secrets():
 
@@ -21,9 +21,9 @@ def create_secrets():
     region_name = "us-east-1"
     client = boto3.client('secretsmanager', region_name=region_name)
 
-    response = client.create_secret(
-        Name=secret_name,
-        SecretString=str(env_vars)
+    response = client.update_secret(
+        SecretId=secret_name,
+        SecretString=json.dumps(env_vars)
     )
 
     print(f"Secret created successfully! with response {response}")
