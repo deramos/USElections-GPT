@@ -1,9 +1,6 @@
 name: Build, Push, and Deploy to Fargate
 
 on:
-  push:
-    branches:
-      - prodv1
   pull_request:
     branches:
       - prodv1
