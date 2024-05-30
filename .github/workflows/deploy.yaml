@@ -57,3 +57,4 @@ jobs:
 
             docker tag "$service:latest" "$IMAGE_NAME:$service"
             docker push "$IMAGE_NAME:$service"
+          done
