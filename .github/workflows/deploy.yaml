@@ -67,4 +67,8 @@ jobs:
             echo "Pushing image $ecr_tag to ECR"
             # docker push $ecr_tag
             docker push $ecr_tag
+          
+            # remove image after push to accommodate other images
+            docker rmi $ecr_tag
+            docker rmi $image
           done
