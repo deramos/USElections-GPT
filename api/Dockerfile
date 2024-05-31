@@ -1,5 +1,5 @@
 # python:3.9-slim-buster
-FROM pytorch/pytorch:2.3.0-cuda12.1-cudnn8-runtime
+FROM python:3.9-slim-buster
 
 ENV PYTHONBUFFERED=1
 
