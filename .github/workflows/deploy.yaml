@@ -52,9 +52,19 @@ jobs:
 
           docker-compose --env-file .env -f docker-compose.prod.yml build
 
-          for service in $(docker-compose config --services); do
-            IMAGE_NAME="$ECR_REGISTRY/$ECR_REPOSITORY"
-
-            docker tag "$service:latest" "$IMAGE_NAME:$service"
-            docker push "$IMAGE_NAME:$service"
+          for image in $(docker images --format "{{.Repository}}:{{.Tag}}" | grep "uselections"); do
+            image_name=$(echo $image | cut -d ':' -f 1)
+            image_tag=$(echo $image | cut -d ':' -f 2)
+          
+            # Construct the new ECR tag
+            ecr_tag="${$ECR_REGISTRY}/${$ECR_REPOSITORY}:${image_name}"
+          
+            # Tag the image
+            echo "Tagging image $image as $ecr_tag"
+            docker tag $image $ecr_tag
+            
+            # Push the image to ECR
+            echo "Pushing image $ecr_tag to ECR"
+            # docker push $ecr_tag
+            docker push $ecr_tag
           done

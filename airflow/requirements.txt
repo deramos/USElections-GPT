@@ -1,4 +1,4 @@
-chromadb>=0.4.24, <0.5
-apache-airflow-providers-papermill~=3.6.2
-pendulum~=3.0.0
-papermill~=2.5.0
+apache-airflow-providers-papermill
+pendulum
+papermill
+chromadb
