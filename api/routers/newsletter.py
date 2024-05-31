@@ -2,6 +2,7 @@ import http
 import logging
 from fastapi import APIRouter
 from fastapi.responses import JSONResponse
+from fastapi.encoders import jsonable_encoder
 from daos.newsletter import NewsLetterObject
 from dbservices.mongoservice import MongoService
 
@@ -22,7 +23,8 @@ async def subscribe(data: NewsLetterObject):
     :return: HTTPStatus_CREATED
     """
     try:
-        insert_successful = MongoService.insert_data('newsletter-subscribers', data=[dict(data)])
+        insert_successful = MongoService.insert_data('newsletter-subscribers',
+                                                     data=[jsonable_encoder(data)])
 
         if insert_successful:
             return JSONResponse(
