@@ -50,14 +50,14 @@ jobs:
           ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
           ECR_REGISTRY="$ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com"
 
-          docker-compose --env-file .env -f docker-compose.prod.yml build
+          docker compose --env-file .env -f docker-compose.prod.yml build
 
           for image in $(docker images --format "{{.Repository}}:{{.Tag}}" | grep "uselections"); do
             image_name=$(echo $image | cut -d ':' -f 1)
             image_tag=$(echo $image | cut -d ':' -f 2)
           
             # Construct the new ECR tag
-            ecr_tag="${$ECR_REGISTRY}/${$ECR_REPOSITORY}:${image_name}"
+            ecr_tag="$ECR_REGISTRY/$ECR_REPOSITORY:$image_name"
           
             # Tag the image
             echo "Tagging image $image as $ecr_tag"
