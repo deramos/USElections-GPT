@@ -49,6 +49,10 @@ jobs:
         run: |
           ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
           ECR_REGISTRY="$ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com"
+          
+          # prune docker image and volume
+          docker system prune
+          docker volume prune
 
           docker compose --env-file .env -f docker-compose.prod.yml build
 
