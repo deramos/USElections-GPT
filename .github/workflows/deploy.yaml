@@ -51,8 +51,8 @@ jobs:
           ECR_REGISTRY="$ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com"
           
           # prune docker image and volume
-          docker system prune
-          docker volume prune
+          docker system prune -f
+          docker volume prune -f
 
           docker compose --env-file .env -f docker-compose.prod.yml build
 
