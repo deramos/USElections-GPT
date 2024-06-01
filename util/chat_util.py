@@ -1,11 +1,11 @@
-import torch
 from config import config
 from chromadb import HttpClient
 from transformers import pipeline
 from langchain.vectorstores import Chroma
 
 from langchain.llms import HuggingFacePipeline
-from langchain.embeddings.huggingface import HuggingFaceEmbeddings
+from langchain_mistralai.embeddings import MistralAIEmbeddings
+from langchain_mistralai.chat_models import ChatMistralAI
 from langchain.prompts import MessagesPlaceholder, ChatPromptTemplate
 from langchain_core.runnables.history import RunnableWithMessageHistory
 from langchain.chains.combine_documents import create_stuff_documents_chain
@@ -13,12 +13,16 @@ from langchain_community.chat_message_histories import RedisChatMessageHistory
 from transformers import AutoTokenizer, BitsAndBytesConfig, AutoModelForCausalLM
 from langchain.chains import create_retrieval_chain, create_history_aware_retriever
 
+# __import__('pysqlite3')
+# import sys
+# sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
+
 
 class LLMUtil:
 
     model_name = config.MODEL_NAME
-    vector_store = Chroma(client=HttpClient(),
-                          embedding_function=HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2"),
+    vector_store = Chroma(client=HttpClient('https://us-election-gpt-vectordb.fly.dev'),
+                          embedding_function=MistralAIEmbeddings(),
                           collection_name=config.DB_NAME)
     chat_history_prompt = """
         Given a chat history and the latest user question which might reference context in the chat history, 
@@ -42,13 +46,16 @@ class LLMUtil:
     @classmethod
     def init_llm(cls):
         if not cls.rag_llm:
+            # init embedding models
+            # embeddings = MistralAIEmbeddings(model="mistral-embed", mistral_api_key=api_key)
+
             # init tokenizer
             tokenizer = AutoTokenizer.from_pretrained(config.MODEL_NAME)
             tokenizer.padding_side = 'right'
             tokenizer.pad_token = tokenizer.eos_token
 
             # bits and bytes quantization configuration
-            bnb_compute_dtype = getattr(torch, 'float16')
+            bnb_compute_dtype = 'float16'
             quantization_config = BitsAndBytesConfig(
                 load_in_4bit=True,
                 bnb_4bit_quant_type="nf4",

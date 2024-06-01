@@ -8,12 +8,13 @@ services:
     ports:
       - "9000:9000"
     command: [ "uvicorn", "api.main:app", "--host", "0.0.0.0", "--port", "9000" , "--workers", "2", "--reload"]
+    networks:
+      - app-network
     volumes:
       - ./:/app
       - api_data:/var/api-data
     depends_on:
       - scrapyd
-      - vectordb
     env_file:
       - .env
 
@@ -21,6 +22,8 @@ services:
     build:
       context: .
       dockerfile: scraper/Dockerfile
+    networks:
+      - app-network
     ports:
       - "6800:6800"
     command: >
@@ -30,6 +33,8 @@ services:
     build:
       context: .
       dockerfile: scraper/Dockerfile
+    networks:
+      - app-network
     ports:
       - "5000:5000"
     command: >
@@ -44,18 +49,9 @@ services:
     command: >
       sh -c "streamlit run frontend/view.py"
 
-  vectordb:
-    image: chromadb/chroma:0.4.25.dev93
-    restart: always
-    ports:
-      - "8000:8000"
-    volumes:
-      - vectordb:/var/chromadb
-
 networks:
   app-network:
     driver:  bridge
 
 volumes:
   api_data:
-  vectordb:
