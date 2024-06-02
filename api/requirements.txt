@@ -12,5 +12,6 @@ transformers
 itemadapter~=0.8.0
 langchain
 langchain-mistralai
+langchain-community
 websockets~=12.0
 # pysqlite3-binary

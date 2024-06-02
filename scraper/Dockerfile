@@ -5,13 +5,12 @@ ENV PYTHONBUFFERED=1
 WORKDIR /app
 COPY scraper/requirements.txt requirements.txt
 
-# Cleanup apt cache to reduce image size
-RUN apt-get update && \
-    apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && rm -rf /root/.cache/pip/*
-
 # upgrade pip and install requirements
-RUN pip3 install --upgrade pip &&  \
+RUN apt-get update && pip3 install --upgrade pip &&  \
     pip install -r requirements.txt --use-deprecated=legacy-resolver
+
+# Cleanup apt cache to reduce image size
+RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && rm -rf /root/.cache/pip/*
 
 # COPY  folders into docker image (will find cleaner alternative)
 COPY scraper /app/scraper

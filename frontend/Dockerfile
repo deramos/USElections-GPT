@@ -9,12 +9,12 @@ COPY frontend/requirements.txt requirements.txt
 RUN apt-get update && apt-get install -y supervisor && \
     mkdir -p /var/log/supervisor
 
-# Cleanup apt cache to reduce image size
-RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-
 # upgrade pip and install requirements
-RUN pip3 install --upgrade pip &&  \
+RUN apt-get update && pip3 install --upgrade pip &&  \
     pip install -r requirements.txt --use-deprecated=legacy-resolver
+
+# Cleanup apt cache to reduce image size
+RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && rm -rf /root/.cache/pip/*
 
 COPY frontend /app/frontend
 COPY docs /app/docs
