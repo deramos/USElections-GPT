@@ -1,9 +1,11 @@
+import json
 import re
 import scrapy
 from typing import Any
 from config import config
 from .base import BaseSpider
 from datetime import datetime
+from dateutil import parser
 from scrapy.http import Response
 from scraper.items import NewsItem
 from dbservices.mongoservice import MongoService
@@ -69,11 +71,16 @@ class FoxNewsSpider(BaseSpider):
                 self.mark_url_visited(response.url)
 
         # Follow links to other pages recursively
-        for link in response.css('a::attr(href)').getall():
-            yield response.follow(link, callback=self.parse)
+        links = response.css('a::attr(href)').getall()
+        with open('base_links.json', 'w') as f:
+            json.dump(links, f)
+
+        for link in links:
+            if link.startswith('/politics/'):
+                yield response.follow(link, callback=self.parse)
 
     @staticmethod
     def get_publication_date(response):
         pub_date_str = response.css("span.article-date time::text").get().strip()
-        pub_datetime = datetime.strptime(pub_date_str, '%B %d, %Y %I:%M%p %Z')
+        pub_datetime = parser.parse(pub_date_str)
         return pub_datetime

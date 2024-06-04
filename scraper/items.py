@@ -8,7 +8,7 @@ import scrapy
 
 class NewsItem(scrapy.Item):
     title = scrapy.Field()
-    content = scrapy.Field()
+    raw_content = scrapy.Field()
     publication_date = scrapy.Field()
     url = scrapy.Field()
     source = scrapy.Field()

@@ -6,6 +6,7 @@ from .base import BaseSpider
 from datetime import datetime
 from scrapy.http import Response
 from scraper.items import NewsItem
+from dateutil import parser
 from dbservices.mongoservice import MongoService
 
 
@@ -85,7 +86,7 @@ class CNNSpider(BaseSpider):
 
         if pub_timestamp:
             pub_timestamp = pub_timestamp.strip().split('Updated')[-1].strip()
-            pub_timestamp = datetime.strptime(pub_timestamp, '%B %d, %Y %I:%M%p %Z')
+            pub_datetime = parser.parse(pub_timestamp)
             return pub_timestamp
 
         return None
