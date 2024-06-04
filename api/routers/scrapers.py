@@ -119,17 +119,22 @@ async def check_scraper_status(scraper_name: SpidersEnum):
     jobs = scrapy_client.list_jobs(project=config.SCRAPYD_PROJECT_NAME)
     spiders = scrapy_client.list_spiders(project=config.SCRAPYD_PROJECT_NAME)
 
+    job_status = ['pending', 'pending', 'finished']
+
     if spider_name in spiders:
-        for job_status, job_data in jobs.items():
-            for job in job_data:
-                if job['spider'] == spider_name:
-                    result['name'] = spider_name
-                    result['job_id'] = job.get('id')
-                    result['status'] = job_status
-                    break_outer = True
+        for status in job_status:
+            job_data = jobs[status]
+            if job_data:
+                for job in job_data:
+                    print(job)
+                    if job['spider'] == spider_name:
+                        result['name'] = spider_name
+                        result['job_id'] = job.get('id')
+                        result['status'] = status
+                        break_outer = True
+                        break
+                if break_outer:
                     break
-            if break_outer:
-                break
         return JSONResponse(content=result, status_code=http.HTTPStatus.OK)
     else:
         return JSONResponse(content={"message": f"Scraper '{scraper_name}' not found"},
