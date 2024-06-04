@@ -135,7 +135,11 @@ async def check_scraper_status(scraper_name: SpidersEnum):
                         break
                 if break_outer:
                     break
-        return JSONResponse(content=result, status_code=http.HTTPStatus.OK)
+        if result:
+            return JSONResponse(content=result, status_code=http.HTTPStatus.OK)
+        else:
+            return JSONResponse(content={'message': f'Scraper {scraper_name} not running'},
+                                status_code=http.HTTPStatus.OK)
     else:
         return JSONResponse(content={"message": f"Scraper '{scraper_name}' not found"},
                             status_code=http.HTTPStatus.BAD_REQUEST)
