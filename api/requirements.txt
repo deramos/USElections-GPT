@@ -14,3 +14,4 @@ langchain
 langchain-mistralai
 langchain-community
 websockets~=12.0
+sentence_transformers
