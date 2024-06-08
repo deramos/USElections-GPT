@@ -1,9 +1,10 @@
 import requests
 import pendulum
+from config import config
 from http import HTTPStatus
 
 SCRAPERS = ["FoxNewsSpider", "CNNSpider", "NPRNewsSpider", "PoliticoSpider"]
-URL = 'http://localhost:9000/scrapers'
+URL = f'{config.FASTAPI_ENDPOINT}/scrapers'
 
 
 def schedule_scrapers():
@@ -14,6 +15,7 @@ def schedule_scrapers():
         # if spider is running, continue to the next spider
         if 'status' in spider_status and spider_status['status'] is True:
             continue
+
         # else start it
         start_spider = requests.get(f'{URL}/{spider}/start')
 
