@@ -8,8 +8,8 @@ logging.basicConfig(level=logging.INFO)
 
 
 class MongoService:
-    client, mongo_db = None, None
-    logger = logging.getLogger(__name__)
+    _client, _mongo_db = None, None
+    _logger = logging.getLogger(__name__)
 
     @classmethod
     def get_client_and_db(cls):
@@ -19,10 +19,10 @@ class MongoService:
             cls.client: MongoClient
             cls.mongo_db: Database -> Mongo underlying database
         """
-        if cls.client is None:
-            cls.client = MongoClient(config.MONGO_URL)
-            cls.mongo_db = cls.client.get_database(config.DB_NAME)
-        return cls.client, cls.mongo_db
+        if cls._client is None:
+            cls._client = MongoClient(config.MONGO_URL)
+            cls._mongo_db = cls._client.get_database(config.DB_NAME)
+        return cls._client, cls._mongo_db
 
     @classmethod
     def insert_data(cls, collection_name: str, data: list[dict]) -> bool:
@@ -35,8 +35,8 @@ class MongoService:
         try:
             _, db = cls.get_client_and_db()
             inserts = db.get_collection(collection_name).insert_many(data)
-            cls.logger.info(f"Insert into {collection_name} successful!")
+            cls._logger.info(f"Insert into {collection_name} successful!")
             return inserts.acknowledged
         except PyMongoError as e:
-            cls.logger.error(f"Insert failed with error {e}")
+            cls._logger.error(f"Insert failed with error {e}")
             raise e
