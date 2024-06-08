@@ -21,3 +21,7 @@ def schedule_scrapers():
 
         # assert that request was successful
         assert start_spider.status_code == HTTPStatus.OK
+
+
+if __name__ == '__main__':
+    schedule_scrapers()
