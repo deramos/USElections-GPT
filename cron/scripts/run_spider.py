@@ -1,5 +1,4 @@
 import requests
-import pendulum
 from config import config
 from http import HTTPStatus
 
