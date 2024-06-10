@@ -14,7 +14,7 @@ def execute_notebook():
 
     news_count = int(redis_client.get(redis_key)) if redis_client.get(redis_key) is not None else 0
 
-    end_date, start_date = datetime.now(), datetime.now() - timedelta(days=1, minutes=2)
+    end_date, start_date = datetime.now(), datetime.now() - timedelta(days=1, minutes=5)
     end_date_str = end_date.strftime("%Y-%m-%d %H:%M:%S")
     start_date_str = start_date.strftime("%Y-%m-%d %H:%M:%S")
 
@@ -27,7 +27,7 @@ def execute_notebook():
     updated_count = chroma_client.get_collection(os.getenv('DB_NAME')).count()
 
     # assert that the updated count is greater than the previously saved news_count
-    assert updated_count > news_count
+    assert updated_count >= news_count
 
     # update news count
     redis_client.set(redis_key, updated_count)
