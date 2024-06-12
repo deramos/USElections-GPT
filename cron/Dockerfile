@@ -19,8 +19,6 @@ COPY config /app/config
 COPY scheduler /app
 COPY .env /app
 
-# expose project ports
-EXPOSE 8501
 
 # set python path
 ENV PYTHONPATH="$PYTHONPATH:/app"
