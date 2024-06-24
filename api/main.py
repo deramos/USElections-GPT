@@ -1,9 +1,11 @@
 from fastapi import FastAPI
-from api.routers import scrapers, chats
+from api.routers import scrapers, chats, newsletter
+
 
 app = FastAPI(version='1.0',  title='US Elections GPT API', description="US Election GPT APIs")
 app.include_router(scrapers.router)
 app.include_router(chats.router)
+app.include_router(newsletter.router)
 
 
 @app.get('/', tags=['home'])
