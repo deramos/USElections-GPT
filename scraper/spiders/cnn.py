@@ -78,7 +78,8 @@ class CNNSpider(BaseSpider):
 
         # Follow links to other pages recursively
         for link in response.css('a::attr(href)').getall():
-            yield response.follow(link, callback=self.parse)
+            if re.match(self.politics_url_pattern, link):
+                yield response.follow(link, callback=self.parse)
 
     @staticmethod
     def get_publication_date(response):
