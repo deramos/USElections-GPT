@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from api.routers import scrapers, chats, newsletter
 
 
@@ -7,6 +8,13 @@ app.include_router(scrapers.router)
 app.include_router(chats.router)
 app.include_router(newsletter.router)
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],  # Replace with your frontend URL
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.get('/', tags=['home'])
 def home():
