@@ -3,7 +3,7 @@ from config import config
 
 
 class RedisService:
-    redis_client = None
+    _redis_client = None
 
     @classmethod
     def get_client(cls):
@@ -11,9 +11,9 @@ class RedisService:
         Creates an instance of a redis client if the existing client is None
         :return: redis_client -> Redis
         """
-        if not cls.redis_client:
+        if not cls._redis_client:
             try:
-                cls.redis_client = redis.from_url(config.REDIS_BROKER_URL)
+                cls._redis_client = redis.from_url(config.REDIS_BROKER_URL)
             except Exception as e:
                 raise e
-        return cls.redis_client
+        return cls._redis_client
