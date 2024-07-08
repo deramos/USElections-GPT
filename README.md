@@ -45,10 +45,12 @@ A WebSocket server is created using FastAPI to serve the langchain model.
 
 ## MODEL OPTIMIZATIONS
 To ensure that accurate retrieval is done during model chat querying, some LLM optimizations were performed. These optimizations
-include small-to-big retrievals, reranking, and metadata search using extracted named entity recognition
+include small-to-big retrievals, re-ranking, and metadata search using extracted named entity recognition
 
 
-## TO RUN LOCALLY
-Rename `.env.example` to `.env` and fill in the variables. Run `docker compose build` to build the images and then run 
-`docker compose up` to start the services. 
-To run on kubernetes, check out the `deployment.yaml` file
+## TO RUN
+![Simplified Architecture Diagram](docs/img/frontend-screenshot.png)
+
+Rename `.env.example` to `.env` and fill in the variables. 
+Run `docker compose build` to build the images and 
+Run `docker compose up` to start the services. 
