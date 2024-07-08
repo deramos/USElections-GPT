@@ -49,8 +49,9 @@ include small-to-big retrievals, re-ranking, and metadata search using extracted
 
 
 ## TO RUN
+
 ![Simplified Architecture Diagram](docs/img/frontend-screenshot.png)
 
-Rename `.env.example` to `.env` and fill in the variables. 
-Run `docker compose build` to build the images and 
-Run `docker compose up` to start the services. 
+- Rename `.env.example` to `.env` and fill in the variables. 
+- Run `docker compose build` to build the images and 
+- Run `docker compose up` to start the services. 
