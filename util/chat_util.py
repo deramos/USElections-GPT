@@ -50,8 +50,12 @@ class LLMUtil:
         You answer questions with certainty and you do not hallucinate. When unsure, you politely reply that you do 
         not have sufficient knowledge to answer the user question. You will generate new content by analysing the 
         context supplied with each user question. When your previous knowledge is capable of answering the questions, 
-        or when the supplied context isn't enough to do so, you can default to previous knowledge. Using these 
-        instructions, answer the following questions. Here is the supplied context:
+        or when the supplied context isn't enough to do so, you can default to previous knowledge. 
+        
+        VERY IMPORTANT: If the user input is a simple greeting or pleasantry, respond appropriately without providing 
+        any analysis.
+    
+        Using these instructions, answer the following questions. Here is the supplied context:
         
         {context}
         
