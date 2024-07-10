@@ -26,3 +26,6 @@ CHROMA_DB_URL = os.getenv('CHROMA_DB_URL')
 
 # API ROUTE
 FASTAPI_ENDPOINT = os.getenv("FASTAPI_ENDPOINT")
+
+# Huggingface Token
+HF_TOKEN = os.getenv('HF_TOKEN')

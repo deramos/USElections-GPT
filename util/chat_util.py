@@ -7,15 +7,15 @@ from chromadb.utils import embedding_functions
 from langchain_core.embeddings import Embeddings
 from chromadb.api.types import EmbeddingFunction
 from langchain_mistralai.chat_models import ChatMistralAI
-from langchain_mistralai.embeddings import MistralAIEmbeddings
 from langchain.prompts import MessagesPlaceholder, ChatPromptTemplate
 from langchain_core.runnables.history import RunnableWithMessageHistory
 from langchain.chains.combine_documents import create_stuff_documents_chain
+from langchain_community.llms import LlamaCpp
 from langchain_community.chat_message_histories import RedisChatMessageHistory
-from transformers import AutoTokenizer, BitsAndBytesConfig, AutoModelForCausalLM
 from langchain.chains import create_retrieval_chain, create_history_aware_retriever
 
 from dotenv import load_dotenv, find_dotenv
+
 load_dotenv(find_dotenv('.env'))
 
 
@@ -31,7 +31,6 @@ class ChromaEmbeddingsAdapter(Embeddings):
 
 
 class LLMUtil:
-
     embedding_fn = ChromaEmbeddingsAdapter(
         embedding_functions.SentenceTransformerEmbeddingFunction(model_name="all-MiniLM-L6-v2"))
 
@@ -40,12 +39,14 @@ class LLMUtil:
                           embedding_function=embedding_fn)
 
     chat_history_prompt = """
+        <|user|>
         Given a chat history and the latest user question which might reference context in the chat history, 
         formulate a standalone question which can be understood without the chat history. Do NOT answer 
         the question, just reformulate it if needed and otherwise return it as is.
+        <|end|>
     """
     user_input_prompt = """
-        ### [INST]
+        <|user|>
         Instruction: You are an expert political analyst with vast knowledge of the United States electoral process.
         You answer questions with certainty and you do not hallucinate. When unsure, you politely reply that you do 
         not have sufficient knowledge to answer the user question. You will generate new content by analysing the 
@@ -58,11 +59,16 @@ class LLMUtil:
         Using these instructions, answer the following questions. Here is the supplied context:
         
         {context}
-        
-        [/INST]
+        Question: {input}
+        <|end|>
     """
 
-    model = ChatMistralAI(mistral_api_key=os.getenv('MISTRAL_API_KEY'))
+    model = LlamaCpp(
+        model_path="/Users/mac/Documents/projects/USElections-GPT/Phi-3-mini-4k-instruct-q4.gguf",  # path to GGUF file
+        n_ctx=4096,  # The max sequence length to use - note that longer sequence lengths require much more resources
+        n_threads=4,
+        stop=["<|end|>"]
+    )
 
     rag_llm = None
 
@@ -116,4 +122,4 @@ class LLMUtil:
 
     @staticmethod
     def get_message_history(session_id: str) -> RedisChatMessageHistory:
-        return RedisChatMessageHistory(session_id, url=f"{config.REDIS_BROKER_URL}/2")
+        return RedisChatMessageHistory(session_id, url=f"{config.REDIS_BROKER_URL}")
