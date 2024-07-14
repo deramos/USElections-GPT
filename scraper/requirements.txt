@@ -6,4 +6,5 @@ python-scrapyd-api>=2.1.2, <2.2
 redis[hiredis]>=5.0.0, <5.1
 pymongo>=4.6.2, <4.7
 python-dotenv>=0.14.0, <0.15
-python-dateutil
+python-dateutil~=2.9.0
+beautifulsoup4~=4.12.3
