@@ -1,22 +1,23 @@
 import os
-import numpy as np
 from config import config
 from chromadb import HttpClient
-from langchain.vectorstores import Chroma
 from chromadb.utils import embedding_functions
+from langchain.globals import set_debug
 from langchain_core.embeddings import Embeddings
 from chromadb.api.types import EmbeddingFunction
-from langchain_mistralai.chat_models import ChatMistralAI
-from langchain_mistralai.embeddings import MistralAIEmbeddings
 from langchain.prompts import MessagesPlaceholder, ChatPromptTemplate
 from langchain_core.runnables.history import RunnableWithMessageHistory
 from langchain.chains.combine_documents import create_stuff_documents_chain
+from langchain_mistralai.chat_models import ChatMistralAI
+from langchain_community.vectorstores import Chroma
 from langchain_community.chat_message_histories import RedisChatMessageHistory
-from transformers import AutoTokenizer, BitsAndBytesConfig, AutoModelForCausalLM
 from langchain.chains import create_retrieval_chain, create_history_aware_retriever
 
 from dotenv import load_dotenv, find_dotenv
+
 load_dotenv(find_dotenv('.env'))
+
+set_debug(bool(os.getenv('LANGCHAIN_DEBUG')))
 
 
 class ChromaEmbeddingsAdapter(Embeddings):
@@ -31,7 +32,6 @@ class ChromaEmbeddingsAdapter(Embeddings):
 
 
 class LLMUtil:
-
     embedding_fn = ChromaEmbeddingsAdapter(
         embedding_functions.SentenceTransformerEmbeddingFunction(model_name="all-MiniLM-L6-v2"))
 
@@ -40,26 +40,27 @@ class LLMUtil:
                           embedding_function=embedding_fn)
 
     chat_history_prompt = """
+        <|user|>
         Given a chat history and the latest user question which might reference context in the chat history, 
         formulate a standalone question which can be understood without the chat history. Do NOT answer 
         the question, just reformulate it if needed and otherwise return it as is.
+        <|end|>
     """
     user_input_prompt = """
-        ### [INST]
-        Instruction: You are an expert political analyst with vast knowledge of the United States electoral process.
-        You answer questions with certainty and you do not hallucinate. When unsure, you politely reply that you do 
-        not have sufficient knowledge to answer the user question. You will generate new content by analysing the 
-        context supplied with each user question. When your previous knowledge is capable of answering the questions, 
-        or when the supplied context isn't enough to do so, you can default to previous knowledge. 
-        
-        VERY IMPORTANT: If the user input is a simple greeting or pleasantry, respond appropriately without providing 
-        any analysis.
-    
-        Using these instructions, answer the following questions. Here is the supplied context:
-        
+        <|user|>
+        As an expert political analyst on the US electoral process:
+        1. Answer questions with certainty based on your knowledge and the provided context.
+        2. Do not hallucinate or invent information.
+        3. If unsure, politely state that you lack sufficient knowledge to answer.
+        4. Generate new content by analyzing the supplied context. Avoid adding 'Based on the provided context' in your responses
+        5. Use your previous knowledge when appropriate or when the context is insufficient.
+        6. For simple greetings, respond appropriately without analysis.
+
+        Context:
         {context}
-        
-        [/INST]
+
+        Question: {input}
+        <|end|>
     """
 
     model = ChatMistralAI(mistral_api_key=os.getenv('MISTRAL_API_KEY'))
@@ -70,7 +71,7 @@ class LLMUtil:
     def init_llm(cls):
         if not cls.rag_llm:
             # get chromadb retriever from vector store
-            retriever = cls.vector_store.as_retriever()
+            retriever = cls.vector_store.as_retriever(search_kwargs={"k": 3})
 
             # create template for user history prompt
             chat_history_context_prompt = ChatPromptTemplate.from_messages(
