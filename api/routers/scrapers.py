@@ -20,7 +20,7 @@ router = APIRouter(
 )
 
 scrapy_client = ScrapydAPI(target=config.SCRAPYD_SERVER)
-soupCrawlers = {'cnn': CNNSoup}
+soup_crawlers = {'cnn': CNNSoup}
 
 
 @router.get('/list_spiders')
@@ -50,8 +50,8 @@ async def start_scraper(scraper_name: SpidersEnum):
     :param scraper_name: name of the spider to be started
     :return: the ID of the started spider job
     """
-    if scraper_name in soupCrawlers:
-        crawler = soupCrawlers[scraper_name]()
+    if scraper_name in soup_crawlers:
+        crawler = soup_crawlers[scraper_name]()
         crawler.scrape()
 
     spider_name = str(scraper_name)

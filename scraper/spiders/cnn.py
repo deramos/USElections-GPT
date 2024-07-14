@@ -18,7 +18,9 @@ class CNNSpider(BaseSpider):
     kafka_topic = config.KAFKA_TOPIC
     politics_url_pattern = r'https:\/\/edition\.cnn\.com\/(?:2023|2024)\/\d{2}/\d{2}/politics\/(?:\w|-)+'
     stripped_text = [
-        'Cable News Network. A Warner Bros. Discovery Company. All Rights Reserved.CNN Sans ™ & © 2016 Cable News Network.'
+        'Cable News Network.',
+        'A Warner Bros. Discovery Company.',
+        'All Rights Reserved.CNN Sans ™ & © 2016 Cable News Network.'
     ]
 
     def start_requests(self):
@@ -36,7 +38,6 @@ class CNNSpider(BaseSpider):
         :param kwargs: additional keyword arguments
         :return: generator
         """
-
         self.logger.info(f"Scraping {__name__} article: {response.url}")
 
         # Check whether the webpage matches the `politics` regex
