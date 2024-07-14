@@ -116,4 +116,4 @@ class LLMUtil:
 
     @staticmethod
     def get_message_history(session_id: str) -> RedisChatMessageHistory:
-        return RedisChatMessageHistory(session_id, url=f"{config.REDIS_BROKER_URL}/2")
+        return RedisChatMessageHistory(session_id, url=f"{config.REDIS_CONNECTION_STRING}")

@@ -4,7 +4,11 @@ from dotenv import load_dotenv, find_dotenv
 load_dotenv(find_dotenv())
 
 # Redis Config
-REDIS_BROKER_URL = os.getenv("REDIS_BROKER")
+REDIS_CONNECTION_STRING = os.getenv("REDIS_BROKER")
+REDIS_USERNAME = os.getenv("REDIS_USERNAME")
+REDIS_PASSWORD = os.getenv("REDIS_PASSWORD")
+REDIS_URL = os.getenv("REDIS_URL")
+REDIS_PORT = os.getenv("REDIS_PORT")
 
 # ScrapyD Config
 SCRAPYD_SERVER = os.getenv("SCRAPYD_SERVER")
