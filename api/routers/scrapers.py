@@ -9,6 +9,7 @@ from fastapi import APIRouter
 from scrapyd_api import ScrapydAPI
 from fastapi.responses import JSONResponse
 from scraper.spiders.base import SpidersEnum
+from scraper.soups.cnn import CNNSoup
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -19,6 +20,7 @@ router = APIRouter(
 )
 
 scrapy_client = ScrapydAPI(target=config.SCRAPYD_SERVER)
+soupCrawlers = {'cnn': CNNSoup}
 
 
 @router.get('/list_spiders')
@@ -48,6 +50,10 @@ async def start_scraper(scraper_name: SpidersEnum):
     :param scraper_name: name of the spider to be started
     :return: the ID of the started spider job
     """
+    if scraper_name in soupCrawlers:
+        crawler = soupCrawlers[scraper_name]()
+        crawler.scrape()
+
     spider_name = str(scraper_name)
 
     jobs = scrapy_client.list_jobs(project=config.SCRAPYD_PROJECT_NAME)
