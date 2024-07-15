@@ -5,11 +5,12 @@
 import http
 import logging
 from config import config
-from fastapi import APIRouter
 from scrapyd_api import ScrapydAPI
 from fastapi.responses import JSONResponse
 from scraper.spiders.base import SpidersEnum
 from scraper.soups.cnn import CNNSoup
+from scraper.soups.politico import PoliticoSoup
+from fastapi import APIRouter, BackgroundTasks
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -20,7 +21,7 @@ router = APIRouter(
 )
 
 scrapy_client = ScrapydAPI(target=config.SCRAPYD_SERVER)
-soup_crawlers = {'cnn': CNNSoup}
+soup_crawlers = {'CNNSpider': CNNSoup, 'PoliticoSpider': PoliticoSoup}
 
 
 @router.get('/list_spiders')
@@ -44,17 +45,23 @@ def list_spiders():
 
 
 @router.get('/{scraper_name}/start')
-async def start_scraper(scraper_name: SpidersEnum):
+async def start_scraper(scraper_name: SpidersEnum, background_task: BackgroundTasks):
     """
     Starts a spider
+    :param background_task:
     :param scraper_name: name of the spider to be started
     :return: the ID of the started spider job
     """
-    if scraper_name in soup_crawlers:
-        crawler = soup_crawlers[scraper_name]()
-        crawler.scrape()
-
     spider_name = str(scraper_name)
+
+    if spider_name in soup_crawlers:
+        logger.info(f"Found {spider_name} in soup crawlers. Starting scraper")
+        crawler = soup_crawlers[spider_name]()
+        background_task.add_task(crawler.scrape)
+
+        return JSONResponse(
+            content={"message": f"Scraper '{spider_name}' started successfully"},
+            status_code=http.HTTPStatus.OK)
 
     jobs = scrapy_client.list_jobs(project=config.SCRAPYD_PROJECT_NAME)
     spiders = scrapy_client.list_spiders(project=config.SCRAPYD_PROJECT_NAME)
