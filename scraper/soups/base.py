@@ -2,11 +2,8 @@ import logging
 import re
 import requests
 from bs4 import BeautifulSoup
-from datetime import datetime
-from dateutil import parser
 from collections import deque
 from urllib.parse import urljoin
-from dbservices.mongoservice import MongoService
 from dbservices.redisservice import RedisService
 
 logging.basicConfig(level=logging.INFO)
