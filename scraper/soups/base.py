@@ -34,7 +34,7 @@ class BaseSoup:
         """
         Discover URLs from the given page and add them to the queue
         """
-        url = self.normalize_url(url)
+        url = self._normalize_url(url)
 
         self.logger.info(f"Discovering URLs from: {url}")
 
@@ -44,8 +44,8 @@ class BaseSoup:
 
             for link in soup.find_all('a', href=True):
                 full_url = link['href'] if link['href'].startswith('http') else urljoin(self.base_url, link['href'])
-                full_url = self.normalize_url(full_url)
-                if re.match(self.politics_url_pattern, full_url) and not self.is_url_visited(
+                full_url = self._normalize_url(full_url)
+                if re.match(self.politics_url_pattern, full_url) and not self._is_url_visited(
                         full_url) and full_url not in self.urls_to_scrape:
                     self.urls_to_scrape.append(full_url)
 
@@ -67,7 +67,7 @@ class BaseSoup:
         """
         raise NotImplementedError
 
-    def is_url_visited(self, url):
+    def _is_url_visited(self, url):
         """
         check if a web url has been visited
         :param url: web url to be checked
@@ -77,7 +77,7 @@ class BaseSoup:
             raise ValueError(f"Redis key cannot be  '{self.redis_key}'. Change it to proceed.")
         return self.redis_client.sismember(self.redis_key, url)
 
-    def mark_url_visited(self, url):
+    def _mark_url_visited(self, url):
         """
         mark a web url as visited
         :param url: web url to be marked
@@ -88,10 +88,10 @@ class BaseSoup:
         self.redis_client.sadd(self.redis_key, url)
 
     @staticmethod
-    def normalize_url(url):
+    def _normalize_url(url):
         """Remove fragments from the URL"""
         return url.split('#')[0]
 
     @staticmethod
-    def get_publication_date(soup):
+    def _get_publication_date(soup):
         raise NotImplementedError

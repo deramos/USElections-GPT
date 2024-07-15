@@ -37,7 +37,7 @@ class CNNSoup(BaseSoup):
         Parse the scraped webpage for processing. The body of the webpage is only passed if it is a
         politics webpage. Insert data into MongoDB and mark url as visited in the cache
         """
-        url = self.normalize_url(url)
+        url = self._normalize_url(url)
 
         self.logger.info(f"Scraping {self.name} article: {url}")
 
@@ -58,7 +58,7 @@ class CNNSoup(BaseSoup):
             news_item = {
                 'title': title,
                 'raw_content': content,
-                'publication_date': self.get_publication_date(soup),
+                'publication_date': self._get_publication_date(soup),
                 'url': url,
                 'source': 'CNN',
                 'created_at': datetime.utcnow().isoformat()
@@ -71,7 +71,7 @@ class CNNSoup(BaseSoup):
             )
 
             # Mark url as visited
-            self.mark_url_visited(url)
+            self._mark_url_visited(url)
 
             # mark as processed
             self.processed_urls += 1
@@ -80,7 +80,7 @@ class CNNSoup(BaseSoup):
             self.logger.error(f"Error parsing {url}: {str(e)}")
 
     @staticmethod
-    def get_publication_date(soup):
+    def _get_publication_date(soup):
         timestamp_div = soup.find('div', class_='timestamp')
         if timestamp_div:
             pub_timestamp = timestamp_div.text.strip()
