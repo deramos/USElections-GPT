@@ -1,9 +1,7 @@
 import logging
 import re
-import requests
 from bs4 import BeautifulSoup
 from datetime import datetime
-from dateutil import parser
 from .base import BaseSoup
 from dbservices.mongoservice import MongoService
 
@@ -13,7 +11,7 @@ logging.basicConfig(level=logging.INFO)
 class PoliticoSoup(BaseSoup):
 
     def __init__(self):
-        super().__init__()
+        super().__init__(use_playwright=True)
         self.name = 'PoliticoSoup'
         self.base_url = 'https://www.politico.com/'
         self.redis_key = 'politico-visited'
@@ -23,9 +21,13 @@ class PoliticoSoup(BaseSoup):
         """
         Start the scraping process
         """
+        if self.use_playwright:
+            self._setup_playwright()
         self._discover_urls(self.base_url)
         self.logger.info(f"Processing news URLs; length: {len(self.urls_to_scrape)}")
         self._process_urls()
+        if self.use_playwright:
+            self._teardown_playwright()
 
     def _parse(self, url: str) -> None:
         """
@@ -33,12 +35,11 @@ class PoliticoSoup(BaseSoup):
         politics webpage. Insert data into MongoDB and mark url as visited in the cache
         """
         url = self._normalize_url(url)
-
         self.logger.info(f"Scraping {self.name} article: {url}")
 
         try:
-            response = requests.get(url)
-            soup = BeautifulSoup(response.text, 'html.parser')
+            content = self._get_page_content(url)
+            soup = BeautifulSoup(content, 'html.parser')
 
             # Extract data from the current page
             title = soup.select_one('h2.headline').text.strip() if soup.select_one('h2.headline') else None

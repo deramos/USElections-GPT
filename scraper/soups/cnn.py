@@ -28,9 +28,13 @@ class CNNSoup(BaseSoup):
         """
         Start the scraping process
         """
+        if self.use_playwright:
+            self._setup_playwright()
         self._discover_urls(self.base_url)
         self.logger.info(f"Processing news URLs; length: {len(self.urls_to_scrape)}")
         self._process_urls()
+        if self.use_playwright:
+            self._teardown_playwright()
 
     def _parse(self, url: str) -> None:
         """
@@ -42,8 +46,8 @@ class CNNSoup(BaseSoup):
         self.logger.info(f"Scraping {self.name} article: {url}")
 
         try:
-            response = requests.get(url)
-            soup = BeautifulSoup(response.text, 'html.parser')
+            content = self._get_page_content(url)
+            soup = BeautifulSoup(content, 'html.parser')
 
             # Extract data from the current page
             title = soup.title.text if soup.title else None
