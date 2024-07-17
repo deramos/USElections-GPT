@@ -1,9 +1,10 @@
 import redis
+import ssl
 from config import config
 
 
 class RedisService:
-    _redis_client = None
+    redis_client = None
 
     @classmethod
     def get_client(cls):
@@ -11,9 +12,17 @@ class RedisService:
         Creates an instance of a redis client if the existing client is None
         :return: redis_client -> Redis
         """
-        if not cls._redis_client:
+        if not cls.redis_client:
             try:
-                cls._redis_client = redis.from_url(config.REDIS_BROKER_URL)
+                cls.redis_client = redis.Redis(
+                    host=config.REDIS_URL,
+                    port=config.REDIS_PORT,
+                    username=config.REDIS_USERNAME,
+                    password=config.REDIS_PASSWORD,
+                    ssl=True,
+                    ssl_cert_reqs=ssl.CERT_NONE
+                )
+                # redis.from_url(config.REDIS_BROKER_URL)
             except Exception as e:
                 raise e
-        return cls._redis_client
+        return cls.redis_client
