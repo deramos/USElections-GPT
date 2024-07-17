@@ -7,27 +7,8 @@ COPY scraper/requirements.txt requirements.txt
 
 # upgrade pip and install requirements
 RUN apt-get update && \
-    apt-get install -y \
-    libnss3 \
-    libnspr4 \
-    libatk1.0-0 \
-    libatk-bridge2.0-0 \
-    libcups2 \
-    libdrm2 \
-    libxkbcommon0 \
-    libxcomposite1 \
-    libxdamage1 \
-    libxfixes3 \
-    libxrandr2 \
-    libgbm1 \
-    libasound2 \
-    libpango-1.0-0 \
-    libpangocairo-1.0-0 && \
     pip3 install --upgrade pip &&  \
     pip install -r requirements.txt --use-deprecated=legacy-resolver
-
-# Install Playwright browsers
-RUN playwright install chromium
 
 # Cleanup apt cache to reduce image size
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && rm -rf /root/.cache/pip/*

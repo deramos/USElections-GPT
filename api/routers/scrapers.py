@@ -21,7 +21,7 @@ router = APIRouter(
 )
 
 scrapy_client = ScrapydAPI(target=config.SCRAPYD_SERVER)
-soup_crawlers = {'CNNSpider': CNNSoup, 'PoliticoSpider': PoliticoSoup}
+soup_crawlers = {'CNNSpider': CNNSoup}
 
 
 @router.get('/list_spiders')
