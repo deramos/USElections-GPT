@@ -110,7 +110,7 @@ services:
       - redis-insight:/data
 
   vectordb:
-    image: chromadb/chroma:0.4.25.dev93
+    image: chromadb/chroma:latest
     restart: always
     ports:
       - "8000:8000"
