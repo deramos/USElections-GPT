@@ -131,6 +131,18 @@ services:
     volumes:
       - mongodb_data:/var/mongodb
 
+  cron:
+    build:
+      context: .
+      dockerfile: cron/Dockerfile
+    restart: always
+    networks:
+      - app-network
+    env_file:
+      - .env
+    command: >
+      sh -c "python3 scheduler.py"
+
   mongo-express:
     image: mongo-express
     restart: always
