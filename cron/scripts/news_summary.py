@@ -1,3 +1,4 @@
+import logging
 import os
 from dbservices.redisservice import RedisService
 from dbservices.chromaservice import ChromaService
@@ -8,15 +9,20 @@ chroma_client = ChromaService.get_client()
 
 redis_key = 'scraped-news-count'
 
+logger = logging.getLogger("Run News Summary")
+logging.basicConfig(level=logging.INFO)
+
 
 def execute_notebook():
     import papermill as pm
 
     news_count = int(redis_client.get(redis_key)) if redis_client.get(redis_key) is not None else 0
 
-    end_date, start_date = datetime.now(), datetime.now() - timedelta(days=1, minutes=5)
+    end_date, start_date = datetime.now(), datetime.now() - timedelta(days=1)
     end_date_str = end_date.strftime("%Y-%m-%d %H:%M:%S")
     start_date_str = start_date.strftime("%Y-%m-%d %H:%M:%S")
+
+    logger.info(f"Started News Summary Cron {end_date}")
 
     pm.execute_notebook(
         input_path="/app/notebooks/News-Summary.ipynb",
@@ -31,7 +37,3 @@ def execute_notebook():
 
     # update news count
     redis_client.set(redis_key, updated_count)
-
-
-if __name__ == '__main__':
-    execute_notebook()

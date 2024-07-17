@@ -1,18 +1,42 @@
+from apscheduler.schedulers.blocking import BlockingScheduler
+from apscheduler.triggers.cron import CronTrigger
 from pathlib import Path
-from crontab import CronTab
+import subprocess
+import logging
 
-# Initialize a new cron
-cron = CronTab(user=True)
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger('APScheduler')
 
-SCRIPT_PATH = Path.joinpath(Path(__file__).parent, 'scripts')
+SCRIPT_PATH = Path(__file__).parent / 'scripts'
 
-# Define the first job
-new_summary_job = cron.new(command=f'python3 {SCRIPT_PATH}/news_summary.py', comment='Run daily news summary')
-new_summary_job.setall('0 2 * * *')
 
-# Define the second job
-spider_run_job = cron.new(command=f'python3 {SCRIPT_PATH}/run_spider.py', comment='Run scraper spiders')
-spider_run_job.setall('0 2 * * *')
+def run_script(script_name):
+    script_path = SCRIPT_PATH / script_name
+    subprocess.run(['python3', str(script_path)], check=True)
 
-# Write the jobs to the crontab
-cron.write()
+
+def main():
+    scheduler = BlockingScheduler()
+
+    # Schedule news summary to run daily at 2:00 AM
+    scheduler.add_job(
+        lambda: run_script('news_summary.py'),
+        CronTrigger.from_crontab('0 2 * * *'),
+        id='news_summary',
+        name='Run daily news summary'
+    )
+
+    # Schedule spider to run daily at 3:00 AM
+    scheduler.add_job(
+        lambda: run_script('run_spider.py'),
+        CronTrigger.from_crontab('0 3 * * *'),
+        id='run_spider',
+        name='Run scraper spiders'
+    )
+
+    logger.info("Starting scheduler...")
+    scheduler.start()
+
+
+if __name__ == "__main__":
+    main()

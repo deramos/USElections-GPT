@@ -14,9 +14,10 @@ RUN apt-get update && pip3 install --upgrade pip &&  \
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && rm -rf /root/.cache/pip/*
 
 COPY scripts /app/scripts
-COPY api /app/api
+COPY notebooks /app/notebooks
+COPY dbservices /app/dbservices
 COPY config /app/config
-COPY scheduler /app
+COPY scheduler.py /app
 COPY .env /app
 
 
