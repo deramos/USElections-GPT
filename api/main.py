@@ -10,7 +10,7 @@ app.include_router(newsletter.router)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://us-election-gpt.spaarkl.co"],  # frontend URL
+    allow_origins=["*"],  # frontend URL
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

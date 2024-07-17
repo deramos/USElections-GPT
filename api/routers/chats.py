@@ -1,10 +1,9 @@
-import asyncio
 import logging
-
+import asyncio
 from util.chat_util import LLMUtil
-from fastapi import HTTPException
+from fastapi import APIRouter, WebSocket
+from fastapi import Request, HTTPException, Path
 from fastapi.responses import StreamingResponse
-from fastapi import APIRouter, WebSocket, Path, Request
 from langchain_core.runnables.history import RunnableWithMessageHistory
 
 logging.basicConfig(level=logging.INFO)
@@ -58,10 +57,12 @@ async def http_chat(
         {"input": message},
         config={"configurable": {"session_id": session_id}})
 
+    chat_answer = ' '.join(chat_response['answer'].split('\n\n'))
+
     async def stream_response():
-        for part in chat_response.split(r"\w+|\W+"):
-            yield f"data: {part}\n\n"
-            await asyncio.sleep(0.1)
+        for word in chat_answer.split():
+            yield f"data: {word}\n\n"
+            await asyncio.sleep(0.05)
         yield "data: [END]\n\n"
 
     return StreamingResponse(stream_response(), media_type="text/event-stream")

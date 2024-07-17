@@ -9,7 +9,6 @@ from scrapyd_api import ScrapydAPI
 from fastapi.responses import JSONResponse
 from scraper.spiders.base import SpidersEnum
 from scraper.soups.cnn import CNNSoup
-from scraper.soups.politico import PoliticoSoup
 from fastapi import APIRouter, BackgroundTasks
 
 logging.basicConfig(level=logging.INFO)
@@ -62,6 +61,8 @@ async def start_scraper(scraper_name: SpidersEnum, background_task: BackgroundTa
         return JSONResponse(
             content={"message": f"Scraper '{spider_name}' started successfully"},
             status_code=http.HTTPStatus.OK)
+
+    logger.info(f"scraper name: {scraper_name}. Spider name: {spider_name}")
 
     jobs = scrapy_client.list_jobs(project=config.SCRAPYD_PROJECT_NAME)
     spiders = scrapy_client.list_spiders(project=config.SCRAPYD_PROJECT_NAME)
