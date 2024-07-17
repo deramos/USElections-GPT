@@ -1,6 +1,5 @@
 import logging
 import re
-import requests
 from bs4 import BeautifulSoup
 from datetime import datetime
 from dateutil import parser
@@ -13,7 +12,7 @@ logging.basicConfig(level=logging.INFO)
 class CNNSoup(BaseSoup):
 
     def __init__(self):
-        super().__init__()
+        super().__init__(delay_between_requests=5)
         self.name = 'CNNSoup'
         self.base_url = 'https://edition.cnn.com/politics/'
         self.redis_key = 'cnn-visited'
@@ -28,13 +27,9 @@ class CNNSoup(BaseSoup):
         """
         Start the scraping process
         """
-        if self.use_playwright:
-            self._setup_playwright()
         self._discover_urls(self.base_url)
         self.logger.info(f"Processing news URLs; length: {len(self.urls_to_scrape)}")
         self._process_urls()
-        if self.use_playwright:
-            self._teardown_playwright()
 
     def _parse(self, url: str) -> None:
         """
@@ -47,6 +42,9 @@ class CNNSoup(BaseSoup):
 
         try:
             content = self._get_page_content(url)
+            if not content:
+                return
+
             soup = BeautifulSoup(content, 'html.parser')
 
             # Extract data from the current page
