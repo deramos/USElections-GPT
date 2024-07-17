@@ -9,6 +9,7 @@ from dbservices.redisservice import RedisService
 
 logging.basicConfig(level=logging.INFO)
 
+
 class BaseSoup:
 
     def __init__(self, delay_between_requests=5):
