@@ -5,6 +5,7 @@ from chromadb.utils import embedding_functions
 from langchain.globals import set_debug
 from langchain_core.embeddings import Embeddings
 from chromadb.api.types import EmbeddingFunction
+from langchain_community.llms import LlamaCpp
 from langchain.prompts import MessagesPlaceholder, ChatPromptTemplate
 from langchain_core.runnables.history import RunnableWithMessageHistory
 from langchain.chains.combine_documents import create_stuff_documents_chain
@@ -63,7 +64,12 @@ class LLMUtil:
         <|end|>
     """
 
-    model = ChatMistralAI(mistral_api_key=os.getenv('MISTRAL_API_KEY'))
+    model = LlamaCpp(
+        model_path="./Phi-3-mini-4k-instruct-q4.gguf",  # path to GGUF file
+        n_ctx=4096,  # The max sequence length to use - note that longer sequence lengths require much more resources
+        n_threads=4,
+        stop=["<|end|>"]
+    )
 
     rag_llm = None
 
